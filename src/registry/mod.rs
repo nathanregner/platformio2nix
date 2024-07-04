@@ -1,17 +1,26 @@
 use color_eyre::eyre;
-use reqwest::{blocking::Client, Url};
+use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
+use reqwest::{Client, Url};
+use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use semver::VersionReq;
 use serde::Deserialize;
 
 pub struct RegistryClient {
-    client: Client,
+    client: ClientWithMiddleware,
     registry_url: Url,
 }
 
 impl Default for RegistryClient {
     fn default() -> Self {
+        let client = ClientBuilder::new(Client::new())
+            .with(Cache(HttpCache {
+                mode: CacheMode::ForceCache,
+                manager: CACacheManager::default(),
+                options: HttpCacheOptions::default(),
+            }))
+            .build();
         Self {
-            client: Client::new(),
+            client,
             registry_url: Url::parse("https://api.registry.platformio.org")
                 .expect("valid default registry"),
         }
@@ -19,12 +28,12 @@ impl Default for RegistryClient {
 }
 
 impl RegistryClient {
-    pub fn search(
+    pub async fn search(
         &self,
         owner: &str,
         ty: &str,
         name: &str,
-        version: Option<VersionReq>,
+        version: Option<String>,
     ) -> eyre::Result<PackageSpec> {
         let mut url = self.registry_url.clone();
         url.path_segments_mut()
@@ -35,17 +44,21 @@ impl RegistryClient {
             .push(ty)
             .push(name);
         if let Some(version) = version {
-            url.query_pairs_mut()
-                .append_pair("version", &version.to_string());
+            url.query_pairs_mut().append_pair("version", &version);
         }
         println!("url: {}", url);
-        let response = self.client.get(url).send()?;
-        Ok(response.json::<PackageSpec>()?)
+        let response = self.client.get(url).send().await?;
+        let response = response.error_for_status()?;
+        let json = response.text().await?;
+        let de = &mut serde_json::Deserializer::from_str(&json);
+        let spec = serde_path_to_error::deserialize::<_, PackageSpec>(de)?;
+        Ok(spec)
     }
 }
 
 #[derive(Deserialize, Debug)]
 pub struct PackageSpec {
+    version: Version,
     versions: Vec<Version>,
 }
 
@@ -131,10 +144,25 @@ mod tests {
     }
 
     #[test]
-    fn deserialize() {
-        let json = include_str!("../../search.json");
-        let deserializer = &mut serde_json::Deserializer::from_str(json);
-        let spec = serde_path_to_error::deserialize::<_, PackageSpec>(deserializer);
+    fn deserialize_platform_atmelavr() {
+        let json = include_str!("./test/atmelavr.json");
+        let de = &mut serde_json::Deserializer::from_str(json);
+        let spec = serde_path_to_error::deserialize::<_, PackageSpec>(de);
+        match spec {
+            Ok(spec) => {
+                println!("{:?}", spec);
+            }
+            Err(err) => {
+                panic!("failed to deserialize: {err}");
+            }
+        }
+    }
+
+    #[test]
+    fn deserialize_toolchain_atmelavr() {
+        let json = include_str!("./test/toolchain-atmelavr.json");
+        let de = &mut serde_json::Deserializer::from_str(json);
+        let spec = serde_path_to_error::deserialize::<_, PackageSpec>(de);
         match spec {
             Ok(spec) => {
                 println!("{:?}", spec);
@@ -148,6 +176,16 @@ mod tests {
     #[test]
     fn pick_latest_compatible() {
         let spec = PackageSpec {
+            version: Version {
+                name: "1.0.0".parse().unwrap(),
+                files: vec![File {
+                    system: vec![System::LinuxX86_64],
+                    download_url: Url::parse("https://example.com").unwrap(),
+                    checksum: Checksum {
+                        sha256: "deadbeef".to_string(),
+                    },
+                }],
+            },
             versions: vec![
                 Version {
                     name: "1.0.0".parse().unwrap(),

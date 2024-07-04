@@ -6,12 +6,4 @@ result*
 .direnv/
 
 # Misc
-.idea/
-*.qcow2
-
-/intercepts.toml
-
-
-# Added by cargo
-
-/target
+http-cacache

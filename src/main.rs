@@ -1,10 +1,16 @@
+mod output;
 mod registry;
 
-use std::path::{Path, PathBuf};
+use std::{
+    collections::HashMap,
+    path::{Path, PathBuf},
+};
 
 use clap::Parser;
-use color_eyre::eyre;
-use semver::VersionReq;
+use color_eyre::eyre::{self, Context};
+use output::NixSystem;
+use registry::RegistryClient;
+use semver::{Version, VersionReq};
 use serde::Deserialize;
 
 /// Simple program to greet a person
@@ -17,19 +23,20 @@ struct Args {
     core_dir: PathBuf,
 }
 
-// https://docs.platformio.org/en/latest/platforms/creating_platform.html#platform-creating-manifest-file
-
+/// https://docs.platformio.org/en/latest/platforms/creating_platform.html#platform-creating-manifest-file
 #[derive(Deserialize, Debug)]
 pub struct Manifest {
     pub name: String,
     pub version: String,
     pub repository: Option<Repository>,
     #[serde(default)]
-    pub packages: Vec<Package>,
+    pub packages: HashMap<String, Package>,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct Package {
+    #[serde(rename = "type")]
+    pub ty: Option<String>,
     pub owner: String,
     pub version: VersionReq,
 }
@@ -40,10 +47,37 @@ pub enum Repository {
     Git { url: String },
 }
 
-fn main() -> eyre::Result<()> {
+#[tokio::main]
+async fn main() -> eyre::Result<()> {
     let args = Args::parse();
     let platforms = extract_manifests(&args.core_dir.join("platforms"), "platform.json")?;
+
     let packages = extract_manifests(&args.core_dir.join("packages"), "package.json")?;
+
+    let client = RegistryClient::default();
+    for platform in &platforms {
+        let package_spec = client
+            .search(
+                "platformio",
+                "platform",
+                &platform.name,
+                Some(
+                    platform
+                        .version
+                        .parse()
+                        .wrap_err_with(|| format!("Failed to parse version: {}", platform.name))?,
+                ),
+            )
+            .await?;
+        dbg!(package_spec);
+        // for nix_system in NixSystem::ALL {
+        //     package_spec.pick_latest_compatible(version, system)
+        // }
+    }
+    client
+        .search("platformio", "tool", "platformio", None)
+        .await?;
+
     dbg!(platforms);
     dbg!(packages);
     Ok(())
@@ -61,13 +95,17 @@ fn extract_manifests(dir: &Path, manifest_file: &str) -> Result<Vec<Manifest>, e
             continue;
         }
 
-        let manifest_path = entry.path().join(manifest_file);
-        if !manifest_path.exists() {
+        let path = entry.path().join(manifest_file);
+        if !path.exists() {
             continue;
         }
 
-        let manifest = std::fs::read_to_string(manifest_path)?;
-        manifests.push(serde_json::from_str::<Manifest>(&manifest)?)
+        let json = std::fs::read_to_string(&path)?;
+        let de = &mut serde_json::Deserializer::from_str(&json);
+        let manifest = serde_path_to_error::deserialize::<_, Manifest>(de).wrap_err_with(|| {
+            format!("failed to parse manifest file: {}", path.to_string_lossy())
+        })?;
+        manifests.push(manifest);
     }
 
     Ok(manifests)
