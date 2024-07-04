@@ -8,9 +8,9 @@ use std::{
 
 use clap::Parser;
 use color_eyre::eyre::{self, Context};
-use output::NixSystem;
+use output::{Dependency, NixSystem, SystemDependency};
 use registry::RegistryClient;
-use semver::{Version, VersionReq};
+use semver::VersionReq;
 use serde::Deserialize;
 
 /// Simple program to greet a person
@@ -51,8 +51,9 @@ pub enum Repository {
 async fn main() -> eyre::Result<()> {
     let args = Args::parse();
     let platforms = extract_manifests(&args.core_dir.join("platforms"), "platform.json")?;
-
     let packages = extract_manifests(&args.core_dir.join("packages"), "package.json")?;
+
+    let mut deps = vec![];
 
     let client = RegistryClient::default();
     for platform in &platforms {
@@ -69,17 +70,18 @@ async fn main() -> eyre::Result<()> {
                 ),
             )
             .await?;
-        dbg!(package_spec);
-        // for nix_system in NixSystem::ALL {
-        //     package_spec.pick_latest_compatible(version, system)
-        // }
+        for nix_system in NixSystem::ALL {
+            let mut dep = Dependency::new("system".to_string());
+            let file = package_spec.version.supports(&nix_system.to_registry());
+            if let Some(file) = file {
+                dep.systems.insert(nix_system, SystemDependency::from(file));
+            }
+            deps.push(dep);
+        }
     }
-    client
-        .search("platformio", "tool", "platformio", None)
-        .await?;
 
-    dbg!(platforms);
-    dbg!(packages);
+    // deps to stdout as json:
+    println!("{}", serde_json::to_string(&deps)?);
     Ok(())
 }
 

@@ -33,14 +33,32 @@ impl NixSystem {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-struct Dependency {
+pub struct Dependency {
     #[serde(rename = "type")]
-    ty: String,
-    systems: HashMap<NixSystem, String>,
+    pub ty: String,
+    pub systems: HashMap<NixSystem, SystemDependency>,
+}
+
+impl Dependency {
+    pub fn new(ty: String) -> Self {
+        Self {
+            ty,
+            systems: Default::default(),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-struct SystemDependency {
-    sha256: String,
-    download_url: Url,
+pub struct SystemDependency {
+    pub sha256: String,
+    pub download_url: Url,
+}
+
+impl From<&registry::File> for SystemDependency {
+    fn from(file: &registry::File) -> Self {
+        Self {
+            sha256: file.checksum.sha256.clone(),
+            download_url: file.download_url.clone(),
+        }
+    }
 }

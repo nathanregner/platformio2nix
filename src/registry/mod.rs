@@ -46,7 +46,7 @@ impl RegistryClient {
         if let Some(version) = version {
             url.query_pairs_mut().append_pair("version", &version);
         }
-        println!("url: {}", url);
+        eprintln!("url: {}", url);
         let response = self.client.get(url).send().await?;
         let response = response.error_for_status()?;
         let json = response.text().await?;
@@ -58,37 +58,44 @@ impl RegistryClient {
 
 #[derive(Deserialize, Debug)]
 pub struct PackageSpec {
-    version: Version,
-    versions: Vec<Version>,
+    pub version: Version,
+    pub versions: Vec<Version>,
 }
 
 impl PackageSpec {
-    pub fn pick_latest_compatible(&self, version: VersionReq, system: System) -> Option<&Version> {
+    pub fn pick_latest_compatible(&self, version: VersionReq, system: &System) -> Option<&Version> {
         self.versions
             .iter()
-            .filter(|v| {
-                version.matches(&v.name) && v.files.iter().any(|f| f.system.supports(&system))
-            })
+            .filter(|v| version.matches(&v.name) && v.supports(system).is_some())
             .max_by(|a, b| a.name.cmp(&b.name))
     }
 }
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct Version {
-    name: semver::Version,
-    files: Vec<File>,
+    pub name: semver::Version,
+    pub files: Vec<File>,
+}
+
+impl Version {
+    pub fn supports(&self, system: &System) -> Option<&File> {
+        self.files
+            .iter()
+            .filter(|f| f.system.supports(system))
+            .next()
+    }
 }
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct File {
-    system: SystemSpec,
-    download_url: Url,
-    checksum: Checksum,
+    pub system: SystemSpec,
+    pub download_url: Url,
+    pub checksum: Checksum,
 }
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct Checksum {
-    sha256: String,
+    pub sha256: String,
 }
 
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
@@ -267,7 +274,7 @@ mod tests {
             ],
         };
 
-        let version = spec.pick_latest_compatible("~1".parse().unwrap(), System::LinuxX86_64);
+        let version = spec.pick_latest_compatible("~1".parse().unwrap(), &System::LinuxX86_64);
         assert_eq!(version.map(|v| &v.name), Some(&"1.1.0".parse().unwrap()));
     }
 }
