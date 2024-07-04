@@ -1,0 +1,17 @@
+# Rust
+target/
+
+# Direnv
+result*
+.direnv/
+
+# Misc
+.idea/
+*.qcow2
+
+/intercepts.toml
+
+
+# Added by cargo
+
+/target
