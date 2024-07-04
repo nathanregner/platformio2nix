@@ -1,0 +1,9 @@
+# Rust
+target/
+
+# Direnv
+result*
+.direnv/
+
+# Misc
+http-cacache

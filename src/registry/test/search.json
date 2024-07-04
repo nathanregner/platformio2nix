@@ -1,0 +1,46 @@
+{
+  "page": 1,
+  "limit": 10,
+  "total": 1,
+  "items": [
+    {
+      "id": 8192,
+      "type": "tool",
+      "tier": "community",
+      "owner": { "username": "platformio" },
+      "name": "tool-scons",
+      "description": "SCons software construction tool",
+      "keywords": [
+        "build tools",
+        "build system",
+        "make",
+        "cmake",
+        "ninja",
+        "bazel",
+        "mason"
+      ],
+      "license": "MIT",
+      "updated_at": "2024-03-18T12:11:31Z",
+      "stars_count": 1918,
+      "popularity_rank": 1,
+      "popularity_trend": 1,
+      "version": {
+        "id": 60948,
+        "name": "4.40700.0",
+        "unpacked_size": 2367736,
+        "released_at": "2024-03-18T12:11:28Z",
+        "files": [
+          {
+            "name": "tool-scons-4.40700.0.tar.gz",
+            "size": 587685,
+            "checksum": {
+              "sha256": "02d58027d52c47df5334127aadbe9866fa7e1206bf2192066f89b1fea20fd953"
+            },
+            "system": "*",
+            "download_url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz"
+          }
+        ]
+      }
+    }
+  ]
+}

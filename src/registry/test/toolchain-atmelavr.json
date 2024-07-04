@@ -1,0 +1,389 @@
+{
+  "id": 8203,
+  "type": "tool",
+  "tier": "community",
+  "owner": {
+    "username": "platformio",
+    "firstname": "PlatformIO",
+    "lastname": null,
+    "is_org": true
+  },
+  "name": "toolchain-atmelavr",
+  "description": "GCC Toolchain for Microchip AVR microcontrollers",
+  "added_at": "2016-05-25T10:04:00Z",
+  "updated_at": "2022-01-26T15:43:08Z",
+  "modified_at": "2020-07-05T16:38:32Z",
+  "downloads_trend": -2109,
+  "popularity_trend": -1,
+  "popularity_rank": 10,
+  "open_issues_count": 0,
+  "stars_count": 0,
+  "examples_count": 0,
+  "title": null,
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://gcc.gnu.org/wiki/avr-gcc",
+  "repository_url": null,
+  "keywords": [
+    "toolchain",
+    "build tools",
+    "compiler",
+    "assembler",
+    "linker",
+    "preprocessor",
+    "microchip",
+    "avr"
+  ],
+  "authors": null,
+  "dependencies_count": 0,
+  "dependents_count": 4,
+  "top_dependencies": [],
+  "top_dependents": [
+    {
+      "id": 8006,
+      "type": "platform",
+      "owner": {
+        "username": "platformio"
+      },
+      "name": "atmelavr"
+    },
+    {
+      "id": 8021,
+      "type": "platform",
+      "owner": {
+        "username": "platformio"
+      },
+      "name": "teensy"
+    },
+    {
+      "id": 8034,
+      "type": "platform",
+      "owner": {
+        "username": "platformio"
+      },
+      "name": "atmelmegaavr"
+    }
+  ],
+  "version": {
+    "id": 41774,
+    "name": "3.70300.220127",
+    "unpacked_size": 246002424,
+    "released_at": "2022-01-26T15:33:19Z",
+    "files": [
+      {
+        "name": "toolchain-atmelavr-darwin_x86_64-3.70300.220127.tar.gz",
+        "size": 47563987,
+        "checksum": {
+          "sha256": "6ee9eeb0a9a3d0d4e5d27c6c13608f60305eaa1dfec8d0efa71ba04266de5462"
+        },
+        "system": [
+          "darwin_x86_64",
+          "darwin_arm64"
+        ],
+        "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/3.70300.220127/toolchain-atmelavr-darwin_x86_64-3.70300.220127.tar.gz"
+      },
+      {
+        "name": "toolchain-atmelavr-linux_aarch64-3.70300.220127.tar.gz",
+        "size": 48391202,
+        "checksum": {
+          "sha256": "672c30a26996f3496fadcf6abe92cc554264c71a6e7177b65a202e1adf078bcb"
+        },
+        "system": [
+          "linux_aarch64"
+        ],
+        "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/3.70300.220127/toolchain-atmelavr-linux_aarch64-3.70300.220127.tar.gz"
+      },
+      {
+        "name": "toolchain-atmelavr-linux_armv6l-3.70300.220127.tar.gz",
+        "size": 44906491,
+        "checksum": {
+          "sha256": "227036d8bd46fd1804a04bd2b15ee55799f8db7b90868e871eebf887248d2bae"
+        },
+        "system": [
+          "linux_armv6l",
+          "linux_armv7l",
+          "linux_armv8l"
+        ],
+        "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/3.70300.220127/toolchain-atmelavr-linux_armv6l-3.70300.220127.tar.gz"
+      },
+      {
+        "name": "toolchain-atmelavr-linux_i686-3.70300.220127.tar.gz",
+        "size": 47714331,
+        "checksum": {
+          "sha256": "5570662e86e1f8708b8aea3748b23ed840cdc877776d28ac9e35615f7b745b83"
+        },
+        "system": [
+          "linux_i686"
+        ],
+        "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/3.70300.220127/toolchain-atmelavr-linux_i686-3.70300.220127.tar.gz"
+      },
+      {
+        "name": "toolchain-atmelavr-linux_x86_64-3.70300.220127.tar.gz",
+        "size": 47997212,
+        "checksum": {
+          "sha256": "38434a72649f1f9241c0823ae033020c2449c396e86519c2f891051b9aabe153"
+        },
+        "system": [
+          "linux_x86_64"
+        ],
+        "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/3.70300.220127/toolchain-atmelavr-linux_x86_64-3.70300.220127.tar.gz"
+      },
+      {
+        "name": "toolchain-atmelavr-windows-3.70300.220127.tar.gz",
+        "size": 52326592,
+        "checksum": {
+          "sha256": "8190430b5004d14574149531b373a15d0f7dbced1ec4a41c5ec9fe2fc9a083dc"
+        },
+        "system": [
+          "windows_amd64",
+          "windows_x86",
+          "windows"
+        ],
+        "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/3.70300.220127/toolchain-atmelavr-windows-3.70300.220127.tar.gz"
+      }
+    ],
+    "is_latest": true
+  },
+  "versions": [
+    {
+      "id": 41774,
+      "name": "3.70300.220127",
+      "unpacked_size": 246002424,
+      "released_at": "2022-01-26T15:33:19Z",
+      "files": [
+        {
+          "name": "toolchain-atmelavr-darwin_x86_64-3.70300.220127.tar.gz",
+          "size": 47563987,
+          "checksum": {
+            "sha256": "6ee9eeb0a9a3d0d4e5d27c6c13608f60305eaa1dfec8d0efa71ba04266de5462"
+          },
+          "system": [
+            "darwin_x86_64",
+            "darwin_arm64"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/3.70300.220127/toolchain-atmelavr-darwin_x86_64-3.70300.220127.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-linux_aarch64-3.70300.220127.tar.gz",
+          "size": 48391202,
+          "checksum": {
+            "sha256": "672c30a26996f3496fadcf6abe92cc554264c71a6e7177b65a202e1adf078bcb"
+          },
+          "system": [
+            "linux_aarch64"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/3.70300.220127/toolchain-atmelavr-linux_aarch64-3.70300.220127.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-linux_armv6l-3.70300.220127.tar.gz",
+          "size": 44906491,
+          "checksum": {
+            "sha256": "227036d8bd46fd1804a04bd2b15ee55799f8db7b90868e871eebf887248d2bae"
+          },
+          "system": [
+            "linux_armv6l",
+            "linux_armv7l",
+            "linux_armv8l"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/3.70300.220127/toolchain-atmelavr-linux_armv6l-3.70300.220127.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-linux_i686-3.70300.220127.tar.gz",
+          "size": 47714331,
+          "checksum": {
+            "sha256": "5570662e86e1f8708b8aea3748b23ed840cdc877776d28ac9e35615f7b745b83"
+          },
+          "system": [
+            "linux_i686"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/3.70300.220127/toolchain-atmelavr-linux_i686-3.70300.220127.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-linux_x86_64-3.70300.220127.tar.gz",
+          "size": 47997212,
+          "checksum": {
+            "sha256": "38434a72649f1f9241c0823ae033020c2449c396e86519c2f891051b9aabe153"
+          },
+          "system": [
+            "linux_x86_64"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/3.70300.220127/toolchain-atmelavr-linux_x86_64-3.70300.220127.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-windows-3.70300.220127.tar.gz",
+          "size": 52326592,
+          "checksum": {
+            "sha256": "8190430b5004d14574149531b373a15d0f7dbced1ec4a41c5ec9fe2fc9a083dc"
+          },
+          "system": [
+            "windows_amd64",
+            "windows_x86",
+            "windows"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/3.70300.220127/toolchain-atmelavr-windows-3.70300.220127.tar.gz"
+        }
+      ],
+      "is_latest": true
+    },
+    {
+      "id": 18396,
+      "name": "1.70300.191015",
+      "unpacked_size": 216951379,
+      "released_at": "2019-10-16T07:52:43Z",
+      "files": [
+        {
+          "name": "toolchain-atmelavr-linux_armv6l-1.70300.191015.tar.gz",
+          "size": 47495273,
+          "checksum": {
+            "sha256": "9d0ee0e4353c223ee03e7ce94f668a6cee09e96803dddf29a56871456c148dd6"
+          },
+          "system": [
+            "linux_armv6l",
+            "linux_armv7l",
+            "linux_armv8l"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-linux_armv6l-1.70300.191015.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-windows-1.70300.191015.tar.gz",
+          "size": 50505708,
+          "checksum": {
+            "sha256": "3773712ac184cef6b9dab35686c6196094bac8d8cb3f7bf4f9ebc57cd516259b"
+          },
+          "system": [
+            "windows_amd64",
+            "windows_x86",
+            "windows"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-windows-1.70300.191015.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-linux_aarch64-1.70300.191015.tar.gz",
+          "size": 53122401,
+          "checksum": {
+            "sha256": "37f51fc7269c952d7be6e887f65cb2630f7278ee5cecbc19e02003d895e9d334"
+          },
+          "system": [
+            "linux_aarch64"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-linux_aarch64-1.70300.191015.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-darwin_x86_64-1.70300.191015.tar.gz",
+          "size": 53076334,
+          "checksum": {
+            "sha256": "65bbc8663163454f678f9592aa745d2ef7e3be98654b59083009af56648a06f2"
+          },
+          "system": [
+            "darwin_x86_64",
+            "darwin_arm64"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-darwin_x86_64-1.70300.191015.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-linux_x86_64-1.70300.191015.tar.gz",
+          "size": 52965047,
+          "checksum": {
+            "sha256": "664f0b7b08a15e8d6362b87e2fdb5a4dcfd5959ebc5b19d938e7dff6f12f0524"
+          },
+          "system": [
+            "linux_x86_64"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-linux_x86_64-1.70300.191015.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-linux_i686-1.70300.191015.tar.gz",
+          "size": 52745609,
+          "checksum": {
+            "sha256": "52a8ef798b417e29dd56a707cdfbb430a01569d594c986a8a92899f20f23aab1"
+          },
+          "system": [
+            "linux_i686"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-linux_i686-1.70300.191015.tar.gz"
+        }
+      ],
+      "is_latest": false
+    },
+    {
+      "id": 18395,
+      "name": "1.50400.190710",
+      "unpacked_size": 162418616,
+      "released_at": "2019-07-10T08:56:01Z",
+      "files": [
+        {
+          "name": "toolchain-atmelavr-linux_x86_64-1.50400.190710.tar.gz",
+          "size": 43401436,
+          "checksum": {
+            "sha256": "2c2b2f7879f76dd01acc17e72460ca25e20f79a9f7777852d1ffe1f209d27112"
+          },
+          "system": [
+            "linux_x86_64"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.50400.190710/toolchain-atmelavr-linux_x86_64-1.50400.190710.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-linux_i686-1.50400.190710.tar.gz",
+          "size": 40181357,
+          "checksum": {
+            "sha256": "dd8088ad0a2db77df6db1e4256069e8d8c932815c5f600d3c78286511c325720"
+          },
+          "system": [
+            "linux_i686"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.50400.190710/toolchain-atmelavr-linux_i686-1.50400.190710.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-linux_armv6l-1.50400.190710.tar.gz",
+          "size": 38301238,
+          "checksum": {
+            "sha256": "4b9e29e91d890102025e177659e4e594433504e92c5b062d873bc82ab146b1a0"
+          },
+          "system": [
+            "linux_armv6l",
+            "linux_armv7l",
+            "linux_armv8l"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.50400.190710/toolchain-atmelavr-linux_armv6l-1.50400.190710.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-linux_aarch64-1.50400.190710.tar.gz",
+          "size": 40125063,
+          "checksum": {
+            "sha256": "f7152114009f214e2e307cca2cac71796a655d9429738f55f43d60d1e2067ffe"
+          },
+          "system": [
+            "linux_aarch64"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.50400.190710/toolchain-atmelavr-linux_aarch64-1.50400.190710.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-darwin_x86_64-1.50400.190710.tar.gz",
+          "size": 43258596,
+          "checksum": {
+            "sha256": "b048f0b6bb07089446e1092478aeeb21509fafbd2ec0a0188d5bff9087be13f7"
+          },
+          "system": [
+            "darwin_x86_64",
+            "darwin_arm64"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.50400.190710/toolchain-atmelavr-darwin_x86_64-1.50400.190710.tar.gz"
+        },
+        {
+          "name": "toolchain-atmelavr-windows-1.50400.190710.tar.gz",
+          "size": 42293913,
+          "checksum": {
+            "sha256": "9d00a0b7b61901cc36b1747ff97da29b37acefd493c1d268349dc2e39f1b1ceb"
+          },
+          "system": [
+            "windows_amd64",
+            "windows_x86",
+            "windows"
+          ],
+          "download_url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.50400.190710/toolchain-atmelavr-windows-1.50400.190710.tar.gz"
+        }
+      ],
+      "is_latest": false
+    }
+  ],
+  "readme_url": null
+}

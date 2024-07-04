@@ -1,0 +1,219 @@
+{
+  "id": 8006,
+  "type": "platform",
+  "tier": "community",
+  "owner": {
+    "username": "platformio",
+    "firstname": "PlatformIO",
+    "lastname": null,
+    "is_org": true
+  },
+  "name": "atmelavr",
+  "description": "Atmel AVR 8-bit MCUs deliver a unique combination of performance, power efficiency and design flexibility. Optimized to speed time to market-and easily adapt to new ones-they are based on the industry's most code-efficient architecture for C and assembly programming",
+  "added_at": "2016-11-18T15:38:48Z",
+  "updated_at": "2023-11-29T12:49:58Z",
+  "modified_at": "2023-11-28T12:17:27Z",
+  "downloads_trend": -2220,
+  "popularity_trend": 1,
+  "popularity_rank": 2,
+  "open_issues_count": 113,
+  "stars_count": 126,
+  "examples_count": 8,
+  "boards_count": 203,
+  "title": "Atmel AVR",
+  "license": "Apache-2.0",
+  "homepage": "http://www.atmel.com/products/microcontrollers/avr/default.aspx",
+  "repository_url": "https://github.com/platformio/platform-atmelavr.git",
+  "keywords": ["dev-platform", "microchip", "avr", "atmel", "8-bit"],
+  "authors": [
+    {
+      "name": "PlatformIO",
+      "email": "contact@platformio.org",
+      "url": "https://github.com/platformio"
+    }
+  ],
+  "platform_embedded": true,
+  "frameworks": ["arduino"],
+  "framework_meta": {
+    "arduino": {
+      "title": null,
+      "description": "The official Arduino Wiring-based Framework for Microchip AVR microcontrollers",
+      "dependency": {
+        "id": 8039,
+        "type": "tool",
+        "owner": { "username": "platformio" },
+        "name": "framework-arduino-avr"
+      }
+    }
+  },
+  "dependencies_count": 18,
+  "dependents_count": 0,
+  "top_dependencies": [
+    {
+      "id": 8203,
+      "type": "tool",
+      "owner": { "username": "platformio" },
+      "name": "toolchain-atmelavr"
+    },
+    {
+      "id": 8039,
+      "type": "tool",
+      "owner": { "username": "platformio" },
+      "name": "framework-arduino-avr"
+    },
+    {
+      "id": 8147,
+      "type": "tool",
+      "owner": { "username": "platformio" },
+      "name": "tool-avrdude"
+    }
+  ],
+  "top_dependents": [],
+  "version": {
+    "id": 49636,
+    "name": "4.0.1",
+    "unpacked_size": 247890,
+    "released_at": "2023-01-05T14:05:09Z",
+    "files": [
+      {
+        "name": "atmelavr-4.0.1.tar.gz",
+        "size": 41425,
+        "checksum": {
+          "sha256": "f19426d23623660d3bb0708303ab516de44e8c1c4af980be8d4951cfda400038"
+        },
+        "system": "*",
+        "download_url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/4.0.1/atmelavr-4.0.1.tar.gz"
+      }
+    ],
+    "is_latest": false
+  },
+  "versions": [
+    {
+      "id": 57781,
+      "name": "5.0.0",
+      "unpacked_size": 261459,
+      "released_at": "2023-11-29T12:49:56Z",
+      "files": [
+        {
+          "name": "atmelavr-5.0.0.tar.gz",
+          "size": 41290,
+          "checksum": {
+            "sha256": "f4f22e0450c94fb5d92d62864e6fe714281bb85580cd93bcb159ad868a66b16c"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.0.0/atmelavr-5.0.0.tar.gz"
+        }
+      ],
+      "is_latest": true
+    },
+    {
+      "id": 53045,
+      "name": "4.2.0",
+      "unpacked_size": 253479,
+      "released_at": "2023-05-19T10:54:12Z",
+      "files": [
+        {
+          "name": "atmelavr-4.2.0.tar.gz",
+          "size": 40531,
+          "checksum": {
+            "sha256": "c9d015860ed0c97c78297948356a0af04dd728c505e9307b7081fd1b3903268f"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/4.2.0/atmelavr-4.2.0.tar.gz"
+        }
+      ],
+      "is_latest": false
+    },
+    {
+      "id": 52706,
+      "name": "4.1.0",
+      "unpacked_size": 260004,
+      "released_at": "2023-02-06T13:27:12Z",
+      "files": [
+        {
+          "name": "atmelavr-4.1.0.tar.gz",
+          "size": 42630,
+          "checksum": {
+            "sha256": "5a6bfdd3e2aa2938b0ad6fb8fadb64a2d2d1805a05d0d5c3e410a6a6ad71ca01"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/4.1.0/atmelavr-4.1.0.tar.gz"
+        }
+      ],
+      "is_latest": false
+    },
+    {
+      "id": 49636,
+      "name": "4.0.1",
+      "unpacked_size": 247890,
+      "released_at": "2023-01-05T14:05:09Z",
+      "files": [
+        {
+          "name": "atmelavr-4.0.1.tar.gz",
+          "size": 41425,
+          "checksum": {
+            "sha256": "f19426d23623660d3bb0708303ab516de44e8c1c4af980be8d4951cfda400038"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/4.0.1/atmelavr-4.0.1.tar.gz"
+        }
+      ],
+      "is_latest": false
+    },
+    {
+      "id": 38190,
+      "name": "3.4.0",
+      "unpacked_size": 257259,
+      "released_at": "2021-08-31T13:39:31Z",
+      "files": [
+        {
+          "name": "atmelavr-3.4.0.tar.gz",
+          "size": 40999,
+          "checksum": {
+            "sha256": "cbcf53f624c3054ac5b39b8b88b6b05f705a8ae20fe41420721f037ba1d5a152"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/3.4.0/atmelavr-3.4.0.tar.gz"
+        }
+      ],
+      "is_latest": false
+    },
+    {
+      "id": 34121,
+      "name": "3.3.0",
+      "unpacked_size": 256988,
+      "released_at": "2021-03-29T16:40:00Z",
+      "files": [
+        {
+          "name": "atmelavr-3.3.0.tar.gz",
+          "size": 41024,
+          "checksum": {
+            "sha256": "19e91c3e82bc43df589034af95c1c83ad0edf3efc39583bcc9bbeba033556039"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/3.3.0/atmelavr-3.3.0.tar.gz"
+        }
+      ],
+      "is_latest": false
+    },
+    {
+      "id": 17430,
+      "name": "2.2.0",
+      "unpacked_size": 237180,
+      "released_at": "2020-06-11T10:29:43Z",
+      "files": [
+        {
+          "name": "atmelavr-2.2.0.tar.gz",
+          "size": 38713,
+          "checksum": {
+            "sha256": "219ed0dd7e2557db3920106d885c949d6fcf694ef0b65bb17a4eb9e0e0a13a35"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/2.2.0/atmelavr-2.2.0.tar.gz"
+        }
+      ],
+      "is_latest": false
+    }
+  ],
+  "readme_url": null
+}
