@@ -3,7 +3,7 @@ use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheO
 use reqwest::{Client, Url};
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use semver::VersionReq;
-use serde::Deserialize;
+use serde::{de::Visitor, Deserialize};
 
 pub struct RegistryClient {
     client: ClientWithMiddleware,
@@ -67,31 +67,85 @@ impl PackageSpec {
         self.versions
             .iter()
             .filter(|v| {
-                version.matches(&v.name) && v.files.iter().any(|f| f.system.contains(&system))
+                version.matches(&v.name) && v.files.iter().any(|f| f.system.supports(&system))
             })
             .max_by(|a, b| a.name.cmp(&b.name))
     }
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Clone, Debug)]
 pub struct Version {
     name: semver::Version,
     files: Vec<File>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Clone, Debug)]
 pub struct File {
-    system: Vec<System>,
+    system: SystemSpec,
     download_url: Url,
     checksum: Checksum,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Clone, Debug)]
 pub struct Checksum {
     sha256: String,
 }
 
-#[derive(Deserialize, Hash, Eq, PartialEq, Debug)]
+#[derive(Hash, Eq, PartialEq, Clone, Debug)]
+pub enum SystemSpec {
+    Wildcard,
+    Systems(Vec<System>),
+}
+
+impl<'de> Deserialize<'de> for SystemSpec {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        struct V;
+
+        impl<'de> Visitor<'de> for V {
+            type Value = SystemSpec;
+
+            fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                match v {
+                    "*" => Ok(SystemSpec::Wildcard),
+                    _ => Err(E::invalid_value(serde::de::Unexpected::Str(v), &"\"*\"")),
+                }
+            }
+
+            fn visit_seq<A>(self, seq: A) -> Result<Self::Value, A::Error>
+            where
+                A: serde::de::SeqAccess<'de>,
+            {
+                let systems = serde::de::Deserialize::deserialize(
+                    serde::de::value::SeqAccessDeserializer::new(seq),
+                )?;
+                Ok(SystemSpec::Systems(systems))
+            }
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                formatter.write_str("\"*\" or an array of systems")
+            }
+        }
+
+        deserializer.deserialize_any(V)
+    }
+}
+
+impl SystemSpec {
+    pub fn supports(&self, system: &System) -> bool {
+        match self {
+            SystemSpec::Wildcard => true,
+            SystemSpec::Systems(systems) => systems.contains(&system),
+        }
+    }
+}
+
+#[derive(Deserialize, Hash, Eq, PartialEq, Clone, Debug)]
 #[serde(rename_all = "snake_case")]
 pub enum System {
     DarwinX86_64,
@@ -175,22 +229,24 @@ mod tests {
 
     #[test]
     fn pick_latest_compatible() {
+        let systems = SystemSpec::Systems(vec![System::LinuxX86_64]);
+        let latest = Version {
+            name: "2.0.0".parse().unwrap(),
+            files: vec![File {
+                system: systems.clone(),
+                download_url: Url::parse("https://example.com").unwrap(),
+                checksum: Checksum {
+                    sha256: "deadbeef".to_string(),
+                },
+            }],
+        };
         let spec = PackageSpec {
-            version: Version {
-                name: "1.0.0".parse().unwrap(),
-                files: vec![File {
-                    system: vec![System::LinuxX86_64],
-                    download_url: Url::parse("https://example.com").unwrap(),
-                    checksum: Checksum {
-                        sha256: "deadbeef".to_string(),
-                    },
-                }],
-            },
+            version: latest.clone(),
             versions: vec![
                 Version {
                     name: "1.0.0".parse().unwrap(),
                     files: vec![File {
-                        system: vec![System::LinuxX86_64],
+                        system: systems.clone(),
                         download_url: Url::parse("https://example.com").unwrap(),
                         checksum: Checksum {
                             sha256: "deadbeef".to_string(),
@@ -200,23 +256,14 @@ mod tests {
                 Version {
                     name: "1.1.0".parse().unwrap(),
                     files: vec![File {
-                        system: vec![System::LinuxX86_64],
+                        system: systems.clone(),
                         download_url: Url::parse("https://example.com").unwrap(),
                         checksum: Checksum {
                             sha256: "deadbeef".to_string(),
                         },
                     }],
                 },
-                Version {
-                    name: "2.0.0".parse().unwrap(),
-                    files: vec![File {
-                        system: vec![System::LinuxX86_64],
-                        download_url: Url::parse("https://example.com").unwrap(),
-                        checksum: Checksum {
-                            sha256: "deadbeef".to_string(),
-                        },
-                    }],
-                },
+                latest,
             ],
         };
 
