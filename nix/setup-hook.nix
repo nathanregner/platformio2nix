@@ -29,31 +29,49 @@ let
       '';
 
       passthru = {
-        inherit (dep) install_path manifest;
+        inherit (dep) manifest;
+        installPath = dep.install_path;
+        mutableInstall = false;
       };
     }
   ) (builtins.fromJSON (builtins.readFile lockfile)).dependencies;
   finalDeps = initialDeps // (overrides finalDeps initialDeps);
-  coreDir = linkFarm "platformio-core-dir" (
-    lib.mapAttrsToList (_: drv: {
-      name = drv.passthru.install_path;
-      path = drv;
-    }) finalDeps
-  );
 in
 makeSetupHook
   {
     name = "platformio-setup-hook";
     passthru = {
-      inherit coreDir finalDeps;
+      inherit finalDeps;
     };
   }
   (
+    let
+      # derived from `linkFarm`
+      linkCommands = lib.mapAttrsToList (
+        _: drv:
+        let
+          dest = "$PLATFORMIO_CORE_DIR/${drv.passthru.installPath}";
+        in
+        ''
+          mkdir -p "$(dirname "${dest}")"
+          ${
+            if drv.passthru.mutableInstall then
+              ''
+                cp -Lr ${drv} ${dest}
+                chmod -R +w ${dest}
+              ''
+            else
+              ''ln -s ${drv} ${dest}''
+          }
+        ''
+      ) finalDeps;
+    in
     writeShellScript "platformio-setup-hook.sh" ''
       _platformioSetupHook() {
         # top-level directory must be writable by PlatformIO
-        export PLATFORMIO_CORE_DIR=$(mktemp -d)
-        cp --no-deref -r ${coreDir}/* $PLATFORMIO_CORE_DIR
+        export PLATFORMIO_CORE_DIR=./core-dir
+        mkdir -p $PLATFORMIO_CORE_DIR
+        ${lib.concatStrings linkCommands}
       }
       preConfigureHooks+=(_platformioSetupHook)
     ''
