@@ -17,6 +17,12 @@ let
         pname = dep.name;
         version = dep.version;
         src = fetchurl dep.systems.${stdenv.system};
+        sourceRoot = ".";
+        buildPhase = ''
+          ls -l
+          mkdir -p $out
+          mv * $out
+        '';
       };
     in
     {

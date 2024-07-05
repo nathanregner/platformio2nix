@@ -157,7 +157,8 @@ pub struct File {
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct Checksum {
-    pub sha256: String,
+    #[serde(with = "hex")]
+    pub sha256: Vec<u8>,
 }
 
 #[derive(Deserialize, Hash, Eq, PartialEq, Clone, Debug)]

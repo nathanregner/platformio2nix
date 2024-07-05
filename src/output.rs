@@ -1,9 +1,10 @@
 use std::collections::BTreeMap;
 
+use base64::prelude::*;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use crate::registry::{self, PackageSpec, System, VersionSpec};
+use crate::registry::{self, System, VersionSpec};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "version")]
@@ -92,7 +93,7 @@ impl From<&registry::File> for SystemDependency {
     fn from(file: &registry::File) -> Self {
         Self {
             url: file.download_url.clone(),
-            hash: format!("sha256-{}", file.checksum.sha256),
+            hash: format!("sha256-{}", BASE64_STANDARD.encode(&file.checksum.sha256)),
         }
     }
 }
