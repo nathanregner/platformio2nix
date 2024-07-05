@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 
+use semver::Version;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use crate::registry::{self, System};
+use crate::registry::{self, PackageSpec, System, VersionSpec};
 
 #[derive(Serialize, Deserialize, Hash, Eq, PartialEq, Clone, Copy, Debug)]
 #[serde(rename_all = "kebab-case")]
@@ -34,16 +35,27 @@ impl NixSystem {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Dependency {
+    pub name: String,
+    pub version: semver::Version,
     #[serde(rename = "type")]
     pub ty: String,
     pub systems: HashMap<NixSystem, SystemDependency>,
 }
 
 impl Dependency {
-    pub fn new(ty: String) -> Self {
+    pub fn new(spec: &PackageSpec, version: &VersionSpec) -> Self {
+        let systems = NixSystem::ALL
+            .iter()
+            .filter_map(|nix_system| {
+                let file = version.supports(&nix_system.to_registry());
+                file.map(|file| (*nix_system, SystemDependency::from(file)))
+            })
+            .collect();
         Self {
-            ty,
-            systems: Default::default(),
+            name: spec.name.clone(),
+            ty: spec.ty.clone(),
+            version: version.name.clone(),
+            systems,
         }
     }
 }

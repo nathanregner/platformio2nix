@@ -7,7 +7,7 @@ use std::{
 };
 
 use clap::Parser;
-use color_eyre::eyre::{self, Context};
+use color_eyre::eyre::{self, Context, OptionExt};
 use output::{Dependency, NixSystem, SystemDependency};
 use registry::RegistryClient;
 use semver::VersionReq;
@@ -27,7 +27,7 @@ struct Args {
 #[derive(Deserialize, Debug)]
 pub struct Manifest {
     pub name: String,
-    pub version: String,
+    pub version: semver::Version,
     pub repository: Option<Repository>,
     #[serde(default)]
     pub packages: HashMap<String, Package>,
@@ -50,34 +50,60 @@ pub enum Repository {
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
     let args = Args::parse();
+
+    let client = RegistryClient::default();
+
     let platforms = extract_manifests(&args.core_dir.join("platforms"), "platform.json")?;
+    let platform_packages = platforms
+        .iter()
+        .flat_map(|platform| {
+            platform
+                .packages
+                .iter()
+                .map(|(name, package)| (name, package))
+        })
+        .collect::<HashMap<_, _>>();
     let packages = extract_manifests(&args.core_dir.join("packages"), "package.json")?;
 
     let mut deps = vec![];
 
-    let client = RegistryClient::default();
     for platform in &platforms {
         let package_spec = client
-            .search(
+            .get(
                 "platformio",
                 "platform",
                 &platform.name,
-                Some(
-                    platform
-                        .version
-                        .parse()
-                        .wrap_err_with(|| format!("Failed to parse version: {}", platform.name))?,
-                ),
+                Some(platform.version.to_string()),
             )
             .await?;
-        for nix_system in NixSystem::ALL {
-            let mut dep = Dependency::new("system".to_string());
-            let file = package_spec.version.supports(&nix_system.to_registry());
-            if let Some(file) = file {
-                dep.systems.insert(nix_system, SystemDependency::from(file));
-            }
-            deps.push(dep);
-        }
+        deps.push(Dependency::new(&package_spec, &package_spec.version));
+    }
+
+    for package in &packages {
+        // TODO: search if not found
+        let platform_package = *platform_packages.get(&package.name).ok_or_else(|| {
+            eyre::eyre!("package not found in platform packages: {}", package.name)
+        })?;
+        let ty = platform_package
+            .ty
+            .as_deref()
+            .ok_or_else(|| eyre::eyre!("missing package type: {platform_package:?}"))?;
+
+        let ty = match ty {
+            "toolchain" => "tool",
+            "framework" => "library",
+            ty => ty,
+        };
+
+        let package_spec = client
+            .get(
+                &platform_package.owner,
+                ty,
+                &package.name,
+                Some(package.version.to_string()),
+            )
+            .await?;
+        deps.push(Dependency::new(&package_spec, &package_spec.version));
     }
 
     // deps to stdout as json:
