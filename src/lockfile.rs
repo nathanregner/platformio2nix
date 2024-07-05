@@ -86,7 +86,7 @@ impl Dependency {
                 match manifest.ty {
                     PackageType::Platform => "platforms",
                     PackageType::Package | PackageType::Tool => "packages",
-                    PackageType::Library => "libdeps",
+                    PackageType::Library => "lib",
                 },
                 manifest.spec.name
             ),
