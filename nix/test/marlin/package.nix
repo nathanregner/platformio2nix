@@ -43,7 +43,5 @@ stdenv.mkDerivation {
     cp -r .pio/build/* $out
   '';
 
-  passthru = {
-    inherit (setupHook.passthru) coreDir;
-  };
+  passthru = setupHook.passthru;
 }
