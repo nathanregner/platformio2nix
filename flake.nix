@@ -1,5 +1,5 @@
 {
-  description = "A `kubectl port-forward` replacement";
+  description = "Generate deterministic lockfiles for PlatformIO projects";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -39,11 +39,7 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [
-            (import rust-overlay)
-            # lazy hack to work around https://github.com/rust-lang/rust-bindgen/issues/2488
-            (final: prev: { clang = prev.clang_15; })
-          ];
+          overlays = [ (import rust-overlay) ];
         };
 
         inherit (pkgs) lib;
@@ -58,35 +54,14 @@
         src = lib.cleanSourceWith {
           src = craneLib.path ./.;
           filter =
-            path: type:
-            builtins.match ".*resolve1.xml$" path != null || (craneLib.filterCargoSources path type);
+            path: type: builtins.match "^src/test.*" path != null || (craneLib.filterCargoSources path type);
         };
 
         commonArgs = {
           inherit src;
           strictDeps = true;
-
-          nativeBuildInputs = lib.optionals pkgs.stdenv.isLinux (
-            with pkgs;
-            [
-              #
-              rustPlatform.bindgenHook
-              pkg-config
-              openssl
-            ]
-          );
-
-          buildInputs =
-            [ ]
-            ++ lib.optionals pkgs.stdenv.isLinux (with pkgs; [ dbus ])
-            ++ lib.optionals pkgs.stdenv.isDarwin (
-              with pkgs;
-              [
-                libiconv
-                darwin.apple_sdk.frameworks.CoreServices
-                darwin.apple_sdk.frameworks.Security
-              ]
-            );
+          nativeBuildInputs = (with pkgs; [ pkg-config ]);
+          buildInputs = (with pkgs; [ openssl ]);
         };
 
         # Build *just* the cargo dependencies
@@ -94,7 +69,7 @@
 
         # Build the actual crate itself, reusing the dependency artifacts from
         # above
-        konnect = craneLib.buildPackage (
+        platformio2nix = craneLib.buildPackage (
           commonArgs
           // {
             inherit cargoArtifacts;
@@ -109,7 +84,7 @@
       {
         checks = {
           # Build the crate as part of `nix flake check` for convenience
-          crate = konnect;
+          crate = platformio2nix;
 
           # Note that this is done as a separate derivation so that
           # we can block the CI if there are issues here, but not
@@ -135,51 +110,19 @@
 
           # Run tests with cargo-nextest. Set `doCheck = false` to prevent tests running twice
           nextest = craneLib.cargoNextest (commonArgs // { inherit cargoArtifacts; });
+
+          # Ensure that example builds
         };
 
         packages = rec {
-          default = konnect;
-          inherit konnect;
+          default = platformio2nix;
+          inherit platformio2nix;
+          buildPlatformIOPackage = pkgs.callPackage ./nix/build-platformio-project.nix { };
 
-          ociImage = pkgs.ociTools.buildContainer { args = [ "${konnect}/bin/konnect" ]; };
-          dockerImage = pkgs.dockerTools.buildImage {
-            name = "hello";
-            tag = "latest";
-            created = "now";
-            copyToRoot = pkgs.buildEnv {
-              name = "image-root";
-              paths = [ pkgs.hello ];
-              pathsToLink = [ "/bin" ];
-            };
-            config.Cmd = [ "/bin/hello" ];
-          };
-
-          vm =
-            (nixpkgs.lib.nixosSystem {
-              modules = [
-                (
-                  { modulesPath, ... }:
-                  let
-                    toGuest = builtins.replaceStrings [ "darwin" ] [ "linux" ];
-                    pkgs = nixpkgs.legacyPackages.${system};
-                  in
-                  {
-                    imports = [ "${modulesPath}/virtualisation/qemu-vm.nix" ];
-
-                    virtualisation.host = {
-                      inherit pkgs;
-                    };
-
-                    nixpkgs.hostPlatform = toGuest pkgs.stdenv.hostPlatform.system;
-                  }
-                )
-                ./vm.nix
-              ];
-              # inherit system;
-            }).config.system.build.vm;
+          makePlatformIOSetupHook = pkgs.callPackage ./nix/setup-hook.nix { };
         };
 
-        apps.default = flake-utils.lib.mkApp { drv = konnect; };
+        apps.default = flake-utils.lib.mkApp { drv = platformio2nix; };
 
         formatter = treefmt.config.build.wrapper;
 
@@ -195,7 +138,6 @@
           (craneLib.overrideToolchain rustToolchain).devShell {
             checks = self.checks.${system}; # inherit inputs from checks
             packages = [ treefmt.config.build.programs.nixfmt-rfc-style ];
-            RUSTFLAGS = "--cfg tokio_unstable";
             RUST_SRC_PATH = "${rustToolchain.passthru.availableComponents.rust-src}";
           };
       }

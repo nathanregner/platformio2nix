@@ -107,7 +107,7 @@ async fn main() -> eyre::Result<()> {
     }
 
     let lockfile = Lockfile::new(deps);
-    println!("{}", serde_json::to_string(&lockfile)?);
+    println!("{}", serde_json::to_string_pretty(&lockfile)?);
     Ok(())
 }
 

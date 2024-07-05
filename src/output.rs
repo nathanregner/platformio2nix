@@ -24,7 +24,9 @@ impl Lockfile {
 pub enum NixSystem {
     Aarch64Linux,
     Aarch64Darwin,
+    #[serde(rename = "x86_64-linux")]
     X86_64Linux,
+    #[serde(rename = "x86_64-darwin")]
     X86_64Darwin,
 }
 
@@ -56,6 +58,7 @@ pub struct Dependency {
 }
 
 #[derive(Serialize, Deserialize, Hash, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum DependencyType {
     Platform,
     Package,
@@ -81,15 +84,15 @@ impl Dependency {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct SystemDependency {
-    pub sha256: String,
-    pub download_url: Url,
+    pub url: Url,
+    pub hash: String,
 }
 
 impl From<&registry::File> for SystemDependency {
     fn from(file: &registry::File) -> Self {
         Self {
-            sha256: file.checksum.sha256.clone(),
-            download_url: file.download_url.clone(),
+            url: file.download_url.clone(),
+            hash: format!("sha256-{}", file.checksum.sha256),
         }
     }
 }
