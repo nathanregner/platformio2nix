@@ -1,7 +1,7 @@
 {
   "version": "V1",
-  "dependencies": [
-    {
+  "dependencies": {
+    "packages/framework-arduino-avr": {
       "name": "packages/framework-arduino-avr",
       "version": "5.1.0",
       "manifest": "{\"type\":\"tool\",\"version\":\"5.1.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"framework-arduino-avr\",\"id\":8039,\"requirements\":null,\"uri\":null},\"name\":\"framework-arduino-avr\"}",
@@ -24,7 +24,7 @@
         }
       }
     },
-    {
+    "packages/tool-scons": {
       "name": "packages/tool-scons",
       "version": "4.40502.0",
       "manifest": "{\"type\":\"tool\",\"version\":\"4.40502.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"tool-scons\",\"id\":8192,\"requirements\":null,\"uri\":null},\"name\":\"tool-scons\"}",
@@ -47,7 +47,7 @@
         }
       }
     },
-    {
+    "packages/toolchain-atmelavr": {
       "name": "packages/toolchain-atmelavr",
       "version": "1.70300.191015",
       "manifest": "{\"type\":\"tool\",\"version\":\"1.70300.191015\",\"spec\":{\"owner\":\"platformio\",\"name\":\"toolchain-atmelavr\",\"uri\":null,\"id\":8203,\"requirements\":null},\"name\":\"toolchain-atmelavr\"}",
@@ -70,10 +70,10 @@
         }
       }
     },
-    {
+    "platforms/atmelavr": {
       "name": "platforms/atmelavr",
       "version": "4.0.1",
-      "manifest": "{\"type\":\"platform\",\"version\":\"4.0.1\",\"spec\":{\"owner\":\"platformio\",\"name\":\"atmelavr\",\"id\":8006,\"requirements\":null,\"uri\":null},\"name\":\"atmelavr\"}",
+      "manifest": "{\"type\":\"platform\",\"version\":\"4.0.1\",\"spec\":{\"owner\":\"platformio\",\"name\":\"atmelavr\",\"id\":8006,\"uri\":null,\"requirements\":null},\"name\":\"atmelavr\"}",
       "systems": {
         "aarch64-linux": {
           "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/4.0.1/atmelavr-4.0.1.tar.gz",
@@ -90,31 +90,8 @@
         "x86_64-darwin": {
           "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/4.0.1/atmelavr-4.0.1.tar.gz",
           "hash": "sha256-8ZQm0jYjZg07sHCDA6tRbeROjBxK+YC+jUlRz9pAADg="
-        }
-      }
-    },
-    {
-      "name": "platforms/atmelsam",
-      "version": "8.3.0",
-      "manifest": "{\"type\":\"platform\",\"version\":\"8.3.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"atmelsam\",\"id\":8007,\"uri\":null,\"requirements\":null},\"name\":\"atmelsam\"}",
-      "systems": {
-        "aarch64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelsam/8.3.0/atmelsam-8.3.0.tar.gz",
-          "hash": "sha256-3gT0lvsWj+qdG9N4zPDyWae5D05zsvBGvHdGQK9BqYI="
-        },
-        "aarch64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelsam/8.3.0/atmelsam-8.3.0.tar.gz",
-          "hash": "sha256-3gT0lvsWj+qdG9N4zPDyWae5D05zsvBGvHdGQK9BqYI="
-        },
-        "x86_64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelsam/8.3.0/atmelsam-8.3.0.tar.gz",
-          "hash": "sha256-3gT0lvsWj+qdG9N4zPDyWae5D05zsvBGvHdGQK9BqYI="
-        },
-        "x86_64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelsam/8.3.0/atmelsam-8.3.0.tar.gz",
-          "hash": "sha256-3gT0lvsWj+qdG9N4zPDyWae5D05zsvBGvHdGQK9BqYI="
         }
       }
     }
-  ]
+  }
 }

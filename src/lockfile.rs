@@ -12,13 +12,17 @@ use crate::{
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "version")]
 pub enum Lockfile {
-    // TODO: sorted
-    V1 { dependencies: Vec<Dependency> },
+    V1 {
+        dependencies: BTreeMap<String, Dependency>,
+    },
 }
 
 impl Lockfile {
-    pub fn new(mut dependencies: Vec<Dependency>) -> Self {
-        dependencies.sort_by(|a, b| a.name.cmp(&b.name));
+    pub fn new(dependencies: Vec<Dependency>) -> Self {
+        let dependencies = dependencies
+            .into_iter()
+            .map(|dep| (dep.name.clone(), dep))
+            .collect();
         Self::V1 { dependencies }
     }
 }
@@ -77,6 +81,7 @@ impl Dependency {
                 match manifest.ty {
                     PackageType::Platform => "platforms",
                     PackageType::Package | PackageType::Tool => "packages",
+                    PackageType::Library => "libdeps",
                 },
                 manifest.spec.name
             ),

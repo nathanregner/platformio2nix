@@ -16,10 +16,14 @@ pub struct RegistryClient {
 
 impl Default for RegistryClient {
     fn default() -> Self {
+        let cache_path = xdg::BaseDirectories::with_prefix("platformio2nix")
+            .expect("valid base directories")
+            .create_cache_directory("registry")
+            .expect("valid cache directory");
         let client = ClientBuilder::new(Client::new())
             .with(Cache(HttpCache {
                 mode: CacheMode::ForceCache,
-                manager: CACacheManager::default(),
+                manager: CACacheManager { path: cache_path },
                 options: HttpCacheOptions::default(),
             }))
             .build();
