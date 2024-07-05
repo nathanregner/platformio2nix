@@ -54,7 +54,7 @@ impl RegistryClient {
         extract_json(response).await
     }
 
-    pub async fn search(&self, params: SearchParams<'_>) -> eyre::Result<SearchResult> {
+    pub async fn search(&self, params: SearchParams<'_>) -> eyre::Result<SearchResults> {
         let mut url = self.registry_url.clone();
         url.path_segments_mut()
             .expect("base path")
@@ -99,8 +99,23 @@ impl<'s> SearchParams<'s> {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct SearchResult {
-    pub items: Vec<PackageSpec>,
+pub struct SearchResults {
+    pub items: Vec<PackageMeta>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct PackageMeta {
+    pub owner: PackageMetaOwner,
+    pub name: String,
+    #[serde(rename = "type")]
+    pub ty: String,
+    #[serde(rename = "version")]
+    pub latest_version: VersionSpec,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct PackageMetaOwner {
+    pub username: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -109,16 +124,8 @@ pub struct PackageSpec {
     #[serde(rename = "type")]
     pub ty: String,
     pub version: VersionSpec,
+    pub versions: Vec<VersionSpec>,
 }
-
-// #[derive(Deserialize, Debug)]
-// pub struct PackageSpec {
-//     pub name: String,
-//     #[serde(rename = "type")]
-//     pub ty: String,
-//     pub version: VersionSpec,
-//     pub versions: Vec<VersionSpec>,
-// }
 
 // impl PackageSpec {
 //     pub fn pick_latest_compatible(
@@ -277,7 +284,7 @@ mod tests {
     fn deserialize_search_result() {
         let json = include_str!("./test/search.json");
         let de = &mut serde_json::Deserializer::from_str(json);
-        let spec = serde_path_to_error::deserialize::<_, SearchResult>(de);
+        let spec = serde_path_to_error::deserialize::<_, SearchResults>(de);
         // TODO: snapshot test?
         match spec {
             Ok(spec) => {

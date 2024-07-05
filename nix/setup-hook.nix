@@ -38,7 +38,8 @@ makeSetupHook { name = "platformio-setup-hook"; } (
       # TODO: remove
       echo 'testing testing testing'
       export PLATFORMIO_CORE_DIR=$(mktemp -d)
-      cp -r --no-dereference ${coreDir}/* $PLATFORMIO_CORE_DIR
+      cp -r ${coreDir}/* $PLATFORMIO_CORE_DIR
+      chmod -R +w $PLATFORMIO_CORE_DIR
     }
     preConfigureHooks+=(_platformioSetupHook)
   ''

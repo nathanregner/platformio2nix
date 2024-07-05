@@ -37,7 +37,7 @@ stdenv.mkDerivation {
   '';
 
   buildPhase = ''
-    echo $PLATFORMIO_CORE_DIR
+    echo "PLATFORMIO_CORE_DIR: $PLATFORMIO_CORE_DIR"
     yes 1 | make marlin
   '';
 }

@@ -84,6 +84,7 @@ async fn main() -> eyre::Result<()> {
     }
 
     for package in &packages {
+        // TODO: resolve from platform.packages if available?
         let results = client
             .search(registry::SearchParams {
                 names: &[&package.name],
@@ -96,9 +97,17 @@ async fn main() -> eyre::Result<()> {
                 results.items
             );
         }
-        let Some(package_spec) = results.items.first() else {
+        let Some(package_meta) = results.items.first() else {
             return Err(eyre::eyre!("package not found: {}", package.name));
         };
+        let package_spec = client
+            .get(
+                &package_meta.owner.username,
+                &package_meta.ty,
+                &package.name,
+                Some(package.version.to_string()),
+            )
+            .await?;
         deps.push(Dependency::new(
             package_spec.name.clone(),
             DependencyType::Package,
