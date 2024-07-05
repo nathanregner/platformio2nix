@@ -17,13 +17,18 @@ pub enum Lockfile {
     },
 }
 
+impl Default for Lockfile {
+    fn default() -> Self {
+        Self::V1 {
+            dependencies: BTreeMap::default(),
+        }
+    }
+}
+
 impl Lockfile {
-    pub fn new(dependencies: Vec<Dependency>) -> Self {
-        let dependencies = dependencies
-            .into_iter()
-            .map(|dep| (dep.name.clone(), dep))
-            .collect();
-        Self::V1 { dependencies }
+    pub fn insert(&mut self, dependency: Dependency) {
+        let Self::V1 { dependencies } = self;
+        dependencies.insert(dependency.name.clone(), dependency);
     }
 }
 
@@ -59,9 +64,8 @@ impl NixSystem {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Dependency {
     pub name: String,
+    pub install_path: String,
     pub version: semver::Version,
-    // #[serde(rename = "type")]
-    // pub ty: PackageType,
     pub manifest: String,
     pub systems: BTreeMap<NixSystem, SystemDependency>,
 }
@@ -76,7 +80,8 @@ impl Dependency {
             })
             .collect();
         Self {
-            name: format!(
+            name: manifest.spec.name.clone(),
+            install_path: format!(
                 "{}/{}",
                 match manifest.ty {
                     PackageType::Platform => "platforms",

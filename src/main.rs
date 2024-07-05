@@ -3,9 +3,8 @@ mod manifest;
 mod registry;
 
 use std::{
-    borrow::Cow,
-    env::{self, home_dir},
-    path::{Path, PathBuf},
+    env::{self},
+    path::PathBuf,
 };
 
 use clap::Parser;
@@ -87,13 +86,13 @@ async fn main() -> eyre::Result<()> {
         vec![]
     };
 
-    let mut deps = vec![];
+    let mut lockfile = Lockfile::default();
+
     for manifest in global.into_iter().chain(workspace.into_iter()) {
         let package_spec = client.get_manifest(&manifest).await?;
-        deps.push(Dependency::new(&manifest, &package_spec.version));
+        lockfile.insert(Dependency::new(&manifest, &package_spec.version));
     }
 
-    let lockfile = Lockfile::new(deps);
     println!("{}", serde_json::to_string_pretty(&lockfile)?);
 
     Ok(())
