@@ -2,7 +2,11 @@ mod lockfile;
 mod manifest;
 mod registry;
 
-use std::path::PathBuf;
+use std::{
+    borrow::Cow,
+    env::{self, home_dir},
+    path::{Path, PathBuf},
+};
 
 use clap::Parser;
 use color_eyre::eyre::{self};
@@ -18,7 +22,51 @@ struct Args {
     /// PlatformIO [core_dir](https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/core_dir.html)
     /// containing toolchains and global libraries.
     #[arg(short, long)]
-    core_dir: PathBuf,
+    core_dir: Option<PathBuf>,
+    #[arg(short, long)]
+    workspace_dir: Option<PathBuf>,
+}
+
+impl Args {
+    // https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/core_dir.html
+    fn core_dir(&self) -> eyre::Result<PathBuf> {
+        if let Some(core_dir) = &self.core_dir {
+            return Ok(core_dir.to_owned());
+        }
+
+        if let Some(core_dir) = env::var("PLATFORMIO_CORE_DIR").ok() {
+            return Ok(PathBuf::from(core_dir));
+        }
+
+        if let Some(home_dir) = env::home_dir() {
+            return Ok(home_dir.join(".platformio"));
+        }
+
+        eyre::bail!("Failed to detect core_dir, consider passing --core-dir")
+    }
+
+    // https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/workspace_dir.html
+    fn workspace_dir(&self) -> eyre::Result<Option<PathBuf>> {
+        if let Some(workspace_dir) = self.workspace_dir.as_deref() {
+            return Ok(Some(workspace_dir.to_owned()));
+        }
+
+        if let Some(workspace_dir) = env::var("PLATFORMIO_WORKSPACE_DIR").ok() {
+            return Ok(Some(PathBuf::from(workspace_dir)));
+        }
+
+        let pwd = env::current_dir()?;
+        let mut pwd = Some(&*pwd);
+        while let Some(dir) = pwd {
+            let workspace_dir = dir.join(".pio");
+            if workspace_dir.is_dir() {
+                return Ok(Some(workspace_dir.to_owned()));
+            }
+            pwd = dir.parent();
+        }
+
+        Ok(None)
+    }
 }
 
 #[derive(Deserialize, Debug)]
@@ -30,50 +78,23 @@ pub enum Repository {
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
     let args = Args::parse();
-
     let client = RegistryClient::default();
 
-    let platforms = extract_manifests(&args.core_dir.join("platforms"))?;
-    // let platform_packages = platforms
-    //     .iter()
-    //     .flat_map(|platform| {
-    //         platform
-    //             .packages
-    //             .iter()
-    //             .map(|(name, package)| (name, package))
-    //     })
-    //     .collect::<HashMap<_, _>>();
-    let packages = extract_manifests(&args.core_dir.join("packages"))?;
+    let global = extract_manifests(&args.core_dir()?)?;
+    let workspace = if let Some(workspace_dir) = args.workspace_dir()? {
+        extract_manifests(&workspace_dir)?
+    } else {
+        vec![]
+    };
 
     let mut deps = vec![];
-
-    for manifest in &platforms {
+    for manifest in global.into_iter().chain(workspace.into_iter()) {
         let package_spec = client.get_manifest(&manifest).await?;
-        deps.push(Dependency::new(manifest, &package_spec.version));
-    }
-
-    for manifest in &packages {
-        // TODO: resolve from platform.packages if available?
-        // let results = client
-        //     .search(registry::SearchParams {
-        //         names: &[&package.name],
-        //     })
-        //     .await?;
-        // if results.items.len() > 1 {
-        //     eyre::bail!(
-        //         "Multiple mathches for package {}:\n{:?}",
-        //         package.name,
-        //         results.items
-        //     );
-        // }
-        // let Some(package_meta) = results.items.first() else {
-        //     return Err(eyre::eyre!("package not found: {}", package.name));
-        // };
-        let package_spec = client.get_manifest(&manifest).await?;
-        deps.push(Dependency::new(manifest, &package_spec.version));
+        deps.push(Dependency::new(&manifest, &package_spec.version));
     }
 
     let lockfile = Lockfile::new(deps);
     println!("{}", serde_json::to_string_pretty(&lockfile)?);
+
     Ok(())
 }

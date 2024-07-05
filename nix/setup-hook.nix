@@ -31,7 +31,7 @@ let
       name = dep.name;
       path = unpacked;
     }
-  ) (builtins.fromJSON (builtins.readFile lockfile)).dependencies;
+  ) (builtins.attrValues (builtins.fromJSON (builtins.readFile lockfile)).dependencies);
   coreDir = linkFarm "platformio-core-dir" deps;
 in
 makeSetupHook

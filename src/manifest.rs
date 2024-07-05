@@ -10,13 +10,14 @@ pub enum PackageType {
     Platform,
     Package,
     Tool,
+    Library,
 }
 
 impl PackageType {
     pub fn as_str(&self) -> &str {
         match self {
             PackageType::Platform => "platform",
-            PackageType::Package => "package",
+            PackageType::Package | PackageType::Library => "library",
             PackageType::Tool => "tool",
         }
     }
@@ -43,30 +44,33 @@ pub struct PackageSpec {
     _extra: HashMap<String, Value>,
 }
 
-pub fn extract_manifests(dir: &Path) -> Result<Vec<Manifest>, eyre::Error> {
-    if !dir.exists() {
-        return Ok(vec![]);
-    }
-
+pub fn extract_manifests(root: &Path) -> Result<Vec<Manifest>, eyre::Error> {
     let mut manifests = vec![];
+    extract_manifests_rec(&mut manifests, &root)?;
+    Ok(manifests)
+}
+
+fn extract_manifests_rec(manifests: &mut Vec<Manifest>, dir: &Path) -> Result<(), eyre::Error> {
     for entry in std::fs::read_dir(dir)? {
         let entry = entry?;
         if !entry.file_type()?.is_dir() {
             continue;
         }
 
-        let path = entry.path().join(".piopm");
-        if !path.exists() {
+        let piopm = entry.path().join(".piopm");
+        if !piopm.exists() {
+            extract_manifests_rec(manifests, &entry.path())?;
             continue;
         }
 
-        let json = std::fs::read_to_string(&path)?;
+        let json = std::fs::read_to_string(&piopm)?;
         let de = &mut serde_json::Deserializer::from_str(&json);
         let manifest = serde_path_to_error::deserialize::<_, Manifest>(de).wrap_err_with(|| {
-            format!("failed to parse manifest file: {}", path.to_string_lossy())
+            format!("failed to parse manifest file: {}", piopm.to_string_lossy())
         })?;
         manifests.push(manifest);
+        continue;
     }
 
-    Ok(manifests)
+    Ok(())
 }
