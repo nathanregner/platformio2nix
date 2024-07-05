@@ -12,10 +12,10 @@
       nixpkgs = platformio2nix.inputs.nixpkgs;
       inherit (nixpkgs) lib;
       forAllSystems = lib.genAttrs [
-        "x86_64-linux"
+        "aarch64-darwin"
         "aarch64-linux"
         "x86_64-darwin"
-        "x86_64-windows"
+        "x86_64-linux"
       ];
     in
     {

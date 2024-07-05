@@ -18,29 +18,36 @@ let
         version = dep.version;
         src = fetchurl dep.systems.${stdenv.system};
         sourceRoot = ".";
+
+        env.MANIFEST = dep.manifest;
         buildPhase = ''
-          ls -l
           mkdir -p $out
           mv * $out
+          echo $MANIFEST > $out/.piopm
         '';
       };
     in
     {
-      name = "${dep.type}s/${dep.name}";
+      name = dep.name;
       path = unpacked;
     }
-  ) lockfile.dependencies;
+  ) (builtins.fromJSON (builtins.readFile lockfile)).dependencies;
   coreDir = linkFarm "platformio-core-dir" deps;
 in
-makeSetupHook { name = "platformio-setup-hook"; } (
-  writeShellScript "platformio-setup-hook.sh" ''
-    _platformioSetupHook() {
-      # TODO: remove
-      echo 'testing testing testing'
-      export PLATFORMIO_CORE_DIR=$(mktemp -d)
-      cp -r ${coreDir}/* $PLATFORMIO_CORE_DIR
-      chmod -R +w $PLATFORMIO_CORE_DIR
-    }
-    preConfigureHooks+=(_platformioSetupHook)
-  ''
-)
+makeSetupHook
+  {
+    name = "platformio-setup-hook";
+    passthru = {
+      inherit coreDir;
+    };
+  }
+  (
+    writeShellScript "platformio-setup-hook.sh" ''
+      _platformioSetupHook() {
+        # top-level directory must be writable by PlatformIO
+        export PLATFORMIO_CORE_DIR=$(mktemp -d)
+        cp --no-deref -r ${coreDir}/* $PLATFORMIO_CORE_DIR
+      }
+      preConfigureHooks+=(_platformioSetupHook)
+    ''
+  )

@@ -15,16 +15,13 @@ let
     fetchSubmodules = false;
     sha256 = "sha256-OQ7bUvc2W54UqzsoxgATQg3yl1v9e+8duJI7bL2fvII=";
   };
+  setupHook = makePlatformIOSetupHook { lockfile = ./platformio2nix.lock; };
 in
 stdenv.mkDerivation {
   name = "marlin";
   inherit version src;
 
-  nativeBuildInputs = [
-    (makePlatformIOSetupHook {
-      lockfile = builtins.fromJSON (builtins.readFile ./platformio2nix.lock);
-    })
-  ];
+  nativeBuildInputs = [ setupHook ];
 
   buildInputs = [
     gnumake
@@ -38,6 +35,15 @@ stdenv.mkDerivation {
 
   buildPhase = ''
     echo "PLATFORMIO_CORE_DIR: $PLATFORMIO_CORE_DIR"
-    yes 1 | make marlin
+    echo '1' | make marlin
   '';
+
+  installPhase = ''
+    mkdir -p $out
+    cp -r .pio/build/* $out
+  '';
+
+  passthru = {
+    inherit (setupHook.passthru) coreDir;
+  };
 }

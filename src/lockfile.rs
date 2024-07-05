@@ -4,7 +4,10 @@ use base64::prelude::*;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use crate::registry::{self, System, VersionSpec};
+use crate::{
+    manifest::{Manifest, PackageType},
+    registry::{self, System, VersionSpec},
+};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "version")]
@@ -53,20 +56,14 @@ impl NixSystem {
 pub struct Dependency {
     pub name: String,
     pub version: semver::Version,
-    #[serde(rename = "type")]
-    pub ty: DependencyType,
+    // #[serde(rename = "type")]
+    // pub ty: PackageType,
+    pub manifest: String,
     pub systems: BTreeMap<NixSystem, SystemDependency>,
 }
 
-#[derive(Serialize, Deserialize, Hash, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Debug)]
-#[serde(rename_all = "lowercase")]
-pub enum DependencyType {
-    Platform,
-    Package,
-}
-
 impl Dependency {
-    pub fn new(name: String, ty: DependencyType, version: &VersionSpec) -> Self {
+    pub fn new(manifest: &Manifest, version: &VersionSpec) -> Self {
         let systems = NixSystem::ALL
             .iter()
             .filter_map(|nix_system| {
@@ -75,8 +72,15 @@ impl Dependency {
             })
             .collect();
         Self {
-            name,
-            ty,
+            name: format!(
+                "{}/{}",
+                match manifest.ty {
+                    PackageType::Platform => "platforms",
+                    PackageType::Package | PackageType::Tool => "packages",
+                },
+                manifest.spec.name
+            ),
+            manifest: serde_json::to_string(&manifest).expect("serializable manifest"),
             version: version.name.clone(),
             systems,
         }

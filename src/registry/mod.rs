@@ -7,6 +7,8 @@ use serde::{
     Deserialize,
 };
 
+use crate::manifest::{Manifest, PackageType};
+
 pub struct RegistryClient {
     client: ClientWithMiddleware,
     registry_url: Url,
@@ -30,10 +32,20 @@ impl Default for RegistryClient {
 }
 
 impl RegistryClient {
+    pub async fn get_manifest(&self, manifest: &Manifest) -> eyre::Result<PackageSpec> {
+        self.get(
+            &manifest.spec.owner,
+            manifest.ty,
+            &manifest.spec.name,
+            Some(manifest.version.to_string()),
+        )
+        .await
+    }
+
     pub async fn get(
         &self,
         owner: &str,
-        ty: &str,
+        ty: PackageType,
         name: &str,
         version: Option<String>,
     ) -> eyre::Result<PackageSpec> {
@@ -43,7 +55,7 @@ impl RegistryClient {
             .push("v3")
             .push("packages")
             .push(owner)
-            .push(ty)
+            .push(ty.as_str())
             .push(name);
         if let Some(version) = version {
             url.query_pairs_mut().append_pair("version", &version);
