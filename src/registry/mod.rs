@@ -2,7 +2,6 @@ use color_eyre::eyre::{self, Context};
 use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
 use reqwest::{Client, Url};
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
-use semver::VersionReq;
 use serde::{
     de::{DeserializeOwned, Visitor},
     Deserialize,
@@ -101,15 +100,7 @@ impl<'s> SearchParams<'s> {
 
 #[derive(Deserialize, Debug)]
 pub struct SearchResult {
-    pub items: Vec<SearchResultPackageSpec>,
-}
-
-#[derive(Deserialize, Debug)]
-pub struct SearchResultPackageSpec {
-    pub name: String,
-    #[serde(rename = "type")]
-    pub ty: String,
-    pub version: VersionSpec,
+    pub items: Vec<PackageSpec>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -118,21 +109,29 @@ pub struct PackageSpec {
     #[serde(rename = "type")]
     pub ty: String,
     pub version: VersionSpec,
-    pub versions: Vec<VersionSpec>,
 }
 
-impl PackageSpec {
-    pub fn pick_latest_compatible(
-        &self,
-        version: VersionReq,
-        system: &System,
-    ) -> Option<&VersionSpec> {
-        self.versions
-            .iter()
-            .filter(|v| version.matches(&v.name) && v.supports(system).is_some())
-            .max_by(|a, b| a.name.cmp(&b.name))
-    }
-}
+// #[derive(Deserialize, Debug)]
+// pub struct PackageSpec {
+//     pub name: String,
+//     #[serde(rename = "type")]
+//     pub ty: String,
+//     pub version: VersionSpec,
+//     pub versions: Vec<VersionSpec>,
+// }
+
+// impl PackageSpec {
+//     pub fn pick_latest_compatible(
+//         &self,
+//         version: VersionReq,
+//         system: &System,
+//     ) -> Option<&VersionSpec> {
+//         self.versions
+//             .iter()
+//             .filter(|v| version.matches(&v.name) && v.supports(system).is_some())
+//             .max_by(|a, b| a.name.cmp(&b.name))
+//     }
+// }
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct VersionSpec {
@@ -321,7 +320,8 @@ mod tests {
         }
     }
 
-    #[test]
+    // TODO
+    /* #[test]
     fn pick_latest_compatible() {
         let systems = SystemSpec::Systems(vec![System::LinuxX86_64]);
         let latest = VersionSpec {
@@ -365,5 +365,5 @@ mod tests {
 
         let version = spec.pick_latest_compatible("~1".parse().unwrap(), &System::LinuxX86_64);
         assert_eq!(version.map(|v| &v.name), Some(&"1.1.0".parse().unwrap()));
-    }
+    } */
 }

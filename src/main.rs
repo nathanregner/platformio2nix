@@ -7,8 +7,8 @@ use std::{
 };
 
 use clap::Parser;
-use color_eyre::eyre::{self, Context, OptionExt};
-use output::{Dependency, NixSystem, SystemDependency};
+use color_eyre::eyre::{self, Context};
+use output::{Dependency, DependencyType, Lockfile};
 use registry::RegistryClient;
 use semver::VersionReq;
 use serde::Deserialize;
@@ -54,15 +54,15 @@ async fn main() -> eyre::Result<()> {
     let client = RegistryClient::default();
 
     let platforms = extract_manifests(&args.core_dir.join("platforms"), "platform.json")?;
-    let platform_packages = platforms
-        .iter()
-        .flat_map(|platform| {
-            platform
-                .packages
-                .iter()
-                .map(|(name, package)| (name, package))
-        })
-        .collect::<HashMap<_, _>>();
+    // let platform_packages = platforms
+    //     .iter()
+    //     .flat_map(|platform| {
+    //         platform
+    //             .packages
+    //             .iter()
+    //             .map(|(name, package)| (name, package))
+    //     })
+    //     .collect::<HashMap<_, _>>();
     let packages = extract_manifests(&args.core_dir.join("packages"), "package.json")?;
 
     let mut deps = vec![];
@@ -76,38 +76,38 @@ async fn main() -> eyre::Result<()> {
                 Some(platform.version.to_string()),
             )
             .await?;
-        deps.push(Dependency::new(&package_spec, &package_spec.version));
+        deps.push(Dependency::new(
+            package_spec.name.clone(),
+            DependencyType::Platform,
+            &package_spec.version,
+        ));
     }
 
     for package in &packages {
-        // TODO: search if not found
-        let platform_package = *platform_packages.get(&package.name).ok_or_else(|| {
-            eyre::eyre!("package not found in platform packages: {}", package.name)
-        })?;
-        let ty = platform_package
-            .ty
-            .as_deref()
-            .ok_or_else(|| eyre::eyre!("missing package type: {platform_package:?}"))?;
-
-        let ty = match ty {
-            "toolchain" => "tool",
-            "framework" => "library",
-            ty => ty,
-        };
-
-        let package_spec = client
-            .get(
-                &platform_package.owner,
-                ty,
-                &package.name,
-                Some(package.version.to_string()),
-            )
+        let results = client
+            .search(registry::SearchParams {
+                names: &[&package.name],
+            })
             .await?;
-        deps.push(Dependency::new(&package_spec, &package_spec.version));
+        if results.items.len() > 1 {
+            eyre::bail!(
+                "Multiple mathches for package {}:\n{:?}",
+                package.name,
+                results.items
+            );
+        }
+        let Some(package_spec) = results.items.first() else {
+            return Err(eyre::eyre!("package not found: {}", package.name));
+        };
+        deps.push(Dependency::new(
+            package_spec.name.clone(),
+            DependencyType::Package,
+            &package_spec.version,
+        ));
     }
 
-    // deps to stdout as json:
-    println!("{}", serde_json::to_string(&deps)?);
+    let lockfile = Lockfile::new(deps);
+    println!("{}", serde_json::to_string(&lockfile)?);
     Ok(())
 }
 
