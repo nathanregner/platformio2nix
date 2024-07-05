@@ -54,14 +54,23 @@ makeSetupHook
         in
         ''
           mkdir -p "$(dirname "${dest}")"
-          ${if drv.passthru.mutableInstall then ''cp -Lr ${drv} ${dest}'' else ''ln -s ${drv} ${dest}''}
+          ${
+            if drv.passthru.mutableInstall then
+              ''
+                cp -Lr ${drv} ${dest}
+                chmod -R +w ${dest}
+              ''
+            else
+              ''ln -s ${drv} ${dest}''
+          }
         ''
       ) finalDeps;
     in
     writeShellScript "platformio-setup-hook.sh" ''
       _platformioSetupHook() {
         # top-level directory must be writable by PlatformIO
-        export PLATFORMIO_CORE_DIR=$(mktemp -d)
+        export PLATFORMIO_CORE_DIR=./core-dir
+        mkdir -p $PLATFORMIO_CORE_DIR
         ${lib.concatStrings linkCommands}
       }
       preConfigureHooks+=(_platformioSetupHook)
