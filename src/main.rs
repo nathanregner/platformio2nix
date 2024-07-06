@@ -89,8 +89,8 @@ async fn main() -> eyre::Result<()> {
     let mut lockfile = Lockfile::default();
 
     for manifest in global.into_iter().chain(workspace.into_iter()) {
-        let package_spec = client.get_manifest(&manifest).await?;
-        lockfile.insert(Dependency::new(&manifest, &package_spec.version));
+        let dependency = client.resolve(&manifest).await?;
+        lockfile.insert(dependency);
     }
 
     println!("{}", serde_json::to_string_pretty(&lockfile)?);

@@ -140,7 +140,10 @@
           in
           (craneLib.overrideToolchain rustToolchain).devShell {
             checks = self.checks.${system}; # inherit inputs from checks
-            packages = [ treefmt.config.build.programs.nixfmt-rfc-style ];
+            packages = [
+              treefmt.config.build.programs.nixfmt-rfc-style
+              pkgs.platformio
+            ];
             RUST_SRC_PATH = "${rustToolchain.passthru.availableComponents.rust-src}";
           };
       }

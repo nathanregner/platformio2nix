@@ -5,8 +5,8 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 
 use crate::{
-    manifest::{Manifest, PackageType},
-    registry::{self, System, VersionSpec},
+    manifest::{ExternalSpec, Manifest, PackageType},
+    registry,
 };
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -53,10 +53,10 @@ impl NixSystem {
 
     pub fn to_registry(self) -> registry::System {
         match self {
-            NixSystem::Aarch64Linux => System::LinuxAarch64,
-            NixSystem::Aarch64Darwin => System::DarwinArm64,
-            NixSystem::X86_64Linux => System::LinuxX86_64,
-            NixSystem::X86_64Darwin => System::DarwinX86_64,
+            NixSystem::Aarch64Linux => registry::System::LinuxAarch64,
+            NixSystem::Aarch64Darwin => registry::System::DarwinArm64,
+            NixSystem::X86_64Linux => registry::System::LinuxX86_64,
+            NixSystem::X86_64Darwin => registry::System::DarwinX86_64,
         }
     }
 }
@@ -67,47 +67,82 @@ pub struct Dependency {
     pub install_path: String,
     pub version: semver::Version,
     pub manifest: String,
-    pub systems: BTreeMap<NixSystem, SystemDependency>,
+    pub systems: BTreeMap<NixSystem, FetchUrl>,
 }
 
 impl Dependency {
-    pub fn new(manifest: &Manifest, version: &VersionSpec) -> Self {
+    pub fn from_url(manifest: &Manifest, package_spec: &ExternalSpec, sha256: &[u8]) -> Self {
+        let systems = NixSystem::ALL
+            .iter()
+            .map(|nix_system| (*nix_system, FetchUrl::new(package_spec.uri.clone(), sha256)))
+            .collect();
+        Self::new(
+            manifest,
+            package_spec.name.clone(),
+            manifest.version.clone(),
+            systems,
+        )
+    }
+
+    pub fn from_registry(manifest: &Manifest, package_spec: &registry::PackageSpec) -> Self {
+        let version = &package_spec.version;
         let systems = NixSystem::ALL
             .iter()
             .filter_map(|nix_system| {
                 let file = version.supports(&nix_system.to_registry());
-                file.map(|file| (*nix_system, SystemDependency::from(file)))
+                file.map(|file| (*nix_system, FetchUrl::from(file)))
             })
             .collect();
+        Self::new(
+            manifest,
+            package_spec.name.clone(),
+            version.name.clone(),
+            systems,
+        )
+    }
+
+    fn new(
+        manifest: &Manifest,
+        name: String,
+        version: semver::Version,
+        systems: BTreeMap<NixSystem, FetchUrl>,
+    ) -> Self {
+        let install_path = format!(
+            "{}/{}",
+            match manifest.ty {
+                PackageType::Platform => "platforms",
+                PackageType::Package | PackageType::Tool => "packages",
+                PackageType::Library => "lib",
+            },
+            name
+        );
         Self {
-            name: manifest.spec.name.clone(),
-            install_path: format!(
-                "{}/{}",
-                match manifest.ty {
-                    PackageType::Platform => "platforms",
-                    PackageType::Package | PackageType::Tool => "packages",
-                    PackageType::Library => "lib",
-                },
-                manifest.spec.name
-            ),
+            name,
+            install_path,
             manifest: serde_json::to_string(&manifest).expect("serializable manifest"),
-            version: version.name.clone(),
+            version,
             systems,
         }
     }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct SystemDependency {
+pub struct FetchUrl {
     pub url: Url,
     pub hash: String,
 }
 
-impl From<&registry::File> for SystemDependency {
-    fn from(file: &registry::File) -> Self {
+impl FetchUrl {
+    pub fn new(url: Url, sha256: &[u8]) -> Self {
         Self {
-            url: file.download_url.clone(),
-            hash: format!("sha256-{}", BASE64_STANDARD.encode(&file.checksum.sha256)),
+            url,
+            hash: format!("sha256-{}", BASE64_STANDARD.encode(sha256)),
         }
+    }
+}
+
+impl From<&registry::File> for FetchUrl {
+    fn from(file: &registry::File) -> Self {
+        Self::new(file.download_url.clone(), &file.checksum.sha256)
     }
 }

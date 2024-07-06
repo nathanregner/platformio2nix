@@ -1,0 +1,29 @@
+{
+  "version": "V1",
+  "dependencies": {
+    "SlowSoftWire": {
+      "name": "SlowSoftWire",
+      "install_path": "lib/SlowSoftWire",
+      "version": "0.0.0+20240705183635",
+      "manifest": "{\"type\":\"library\",\"version\":\"0.0.0+20240705183635\",\"spec\":{\"name\":\"SlowSoftWire\",\"uri\":\"https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip\",\"owner\":null,\"requirements\":null,\"id\":null},\"name\":\"SlowSoftWire\"}",
+      "systems": {
+        "aarch64-linux": {
+          "url": "https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip",
+          "hash": "sha256-FhoHDjfPYRlWeJZig5cz12iPYbL6j0bEivR1+qNmXLc="
+        },
+        "aarch64-darwin": {
+          "url": "https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip",
+          "hash": "sha256-FhoHDjfPYRlWeJZig5cz12iPYbL6j0bEivR1+qNmXLc="
+        },
+        "x86_64-linux": {
+          "url": "https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip",
+          "hash": "sha256-FhoHDjfPYRlWeJZig5cz12iPYbL6j0bEivR1+qNmXLc="
+        },
+        "x86_64-darwin": {
+          "url": "https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip",
+          "hash": "sha256-FhoHDjfPYRlWeJZig5cz12iPYbL6j0bEivR1+qNmXLc="
+        }
+      }
+    }
+  }
+}
