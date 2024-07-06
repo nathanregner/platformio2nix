@@ -1,8 +1,8 @@
 {
-  description = "A very basic flake";
+  description = "Marlin firmware build example";
 
   inputs = {
-    platformio2nix.url = "../../..";
+    platformio2nix.url = "../..";
     # nixpkgs.follows = "platformio2nix.inputs.nixpkgs";
   };
 

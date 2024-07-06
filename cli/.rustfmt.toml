@@ -5,4 +5,3 @@ reorder_impl_items = true
 reorder_imports = true
 reorder_modules = true
 use_field_init_shorthand = true
-

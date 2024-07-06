@@ -55,7 +55,7 @@
         rustToolchain = rustToolchainWith [ ];
         craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
         src = lib.cleanSourceWith {
-          src = craneLib.path ./.;
+          src = craneLib.path ./cli;
           filter =
             path: type: builtins.match "^src/test.*" path != null || (craneLib.filterCargoSources path type);
         };
@@ -120,9 +120,8 @@
         packages = rec {
           default = platformio2nix;
           inherit platformio2nix;
-          buildPlatformIOPackage = pkgs.callPackage ./nix/build-platformio-project.nix { };
 
-          makePlatformIOSetupHook = pkgs.callPackage ./nix/setup-hook.nix { };
+          makePlatformIOSetupHook = pkgs.callPackage ./setup-hook.nix { };
         };
 
         apps.default = flake-utils.lib.mkApp { drv = platformio2nix; };

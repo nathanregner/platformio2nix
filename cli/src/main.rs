@@ -9,7 +9,7 @@ use std::{
 
 use clap::Parser;
 use color_eyre::eyre::{self};
-use lockfile::{Dependency, Lockfile};
+use lockfile::Lockfile;
 use manifest::extract_manifests;
 use registry::RegistryClient;
 use serde::Deserialize;

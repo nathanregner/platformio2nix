@@ -1,8 +1,8 @@
 {
-  description = "A very basic flake";
+  description = "PlatformIO external dependency (URL) example";
 
   inputs = {
-    platformio2nix.url = "../../..";
+    platformio2nix.url = "../..";
     # nixpkgs.follows = "platformio2nix.inputs.nixpkgs";
   };
 
