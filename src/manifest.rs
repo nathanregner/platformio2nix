@@ -3,6 +3,7 @@ use std::{collections::HashMap, path::Path};
 use color_eyre::eyre::{self, Context};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use url::Url;
 
 #[derive(Serialize, Deserialize, Hash, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Debug)]
 #[serde(rename_all = "lowercase")]
@@ -36,10 +37,24 @@ pub struct Manifest {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct PackageSpec {
+#[serde(untagged)]
+pub enum PackageSpec {
+    PlatformIO(PlatformIOSpec),
+    External(ExternalSpec),
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PlatformIOSpec {
     pub owner: String,
     pub name: String,
+    #[serde(flatten)]
+    _extra: HashMap<String, Value>,
+}
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ExternalSpec {
+    pub name: String,
+    pub uri: Url,
     #[serde(flatten)]
     _extra: HashMap<String, Value>,
 }
