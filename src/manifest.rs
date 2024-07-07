@@ -1,4 +1,4 @@
-use std::{collections::HashMap, path::Path};
+use std::{collections::BTreeMap, path::Path};
 
 use color_eyre::eyre::{self, Context};
 use serde::{Deserialize, Serialize};
@@ -33,7 +33,7 @@ pub struct Manifest {
     pub spec: PackageSpec,
 
     #[serde(flatten)]
-    _extra: HashMap<String, Value>,
+    _extra: BTreeMap<String, Value>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -48,7 +48,7 @@ pub struct PlatformIOSpec {
     pub owner: String,
     pub name: String,
     #[serde(flatten)]
-    _extra: HashMap<String, Value>,
+    _extra: BTreeMap<String, Value>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -56,7 +56,7 @@ pub struct ExternalSpec {
     pub name: String,
     pub uri: Url,
     #[serde(flatten)]
-    _extra: HashMap<String, Value>,
+    _extra: BTreeMap<String, Value>,
 }
 
 pub fn extract_manifests(root: &Path) -> Result<Vec<Manifest>, eyre::Error> {
