@@ -10,5 +10,5 @@
 
   programs.taplo.enable = true;
 
-  programs.nixfmt-rfc-style.enable = true;
+  programs.nixfmt.enable = true;
 }
