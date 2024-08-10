@@ -185,6 +185,13 @@ pub struct VersionSpec {
 }
 
 impl VersionSpec {
+    pub fn universal(&self) -> Option<&File> {
+        self.files
+            .iter()
+            .filter(|f| f.system == SystemSpec::Wildcard)
+            .next()
+    }
+
     pub fn supports(&self, system: &System) -> Option<&File> {
         self.files
             .iter()

@@ -5,6 +5,7 @@
   linkFarm,
   fetchurl,
   writeShellScript,
+  writeShellScriptBin,
 }:
 
 {
@@ -40,48 +41,49 @@ let
     }
   ) (builtins.fromJSON (builtins.readFile lockfile)).dependencies;
   finalDeps = initialDeps // (overrides finalDeps initialDeps);
-in
-makeSetupHook
-  {
-    name = "platformio-setup-hook";
-    passthru = {
-      inherit finalDeps;
-    };
-  }
-  (
+
+  # derived from `linkFarm`
+  linkCommands = lib.mapAttrsToList (
+    _: drv:
     let
-      # derived from `linkFarm`
-      linkCommands = lib.mapAttrsToList (
-        _: drv:
-        let
-          dest = "$PLATFORMIO_CORE_DIR/${drv.passthru.installPath}";
-        in
-        ''
-          mkdir -p "$(dirname "${dest}")"
-          ${
-            if drv.passthru.mutableInstall then
-              ''
-                cp -Lr ${drv} ${dest}
-                chmod -R +w ${dest}
-              ''
-            else
-              ''ln -s ${drv} ${dest}''
-          }
-        ''
-      ) finalDeps;
+      dest = "$PLATFORMIO_CORE_DIR/${drv.passthru.installPath}";
     in
-    writeShellScript "platformio-setup-hook.sh" ''
-      _platformioSetupHook() {
-        # top-level directory must be writable by PlatformIO
-        export PLATFORMIO_CORE_DIR=./core-dir
-        mkdir -p $PLATFORMIO_CORE_DIR
-        ${lib.concatStrings linkCommands}
-      }
-      preConfigureHooks+=(_platformioSetupHook)
     ''
-    // {
-      passthru = {
-        inherit finalDeps;
-      };
-    }
-  )
+      mkdir -p "$(dirname "${dest}")"
+      ${
+        if drv.passthru.mutableInstall then
+          ''
+            cp -Lr ${drv} ${dest}
+            chmod -R +w ${dest}
+          ''
+        else
+          ''ln -s ${drv} ${dest}''
+      }
+    ''
+  ) finalDeps;
+
+  hook =
+    makeSetupHook
+      {
+        name = "platformio-setup-hook";
+        passthru = {
+          inherit finalDeps;
+          run = writeShellScriptBin "platormio-setup-hook-debug" ''
+            source ${hook}/nix-support/setup-hook
+            _platformioSetupHook
+          '';
+        };
+      }
+      (
+        writeShellScript "platformio-setup-hook.sh" ''
+          _platformioSetupHook() {
+            # top-level directory must be writable by PlatformIO
+            export PLATFORMIO_CORE_DIR=./core-dir
+            mkdir -p $PLATFORMIO_CORE_DIR
+            ${lib.concatStrings linkCommands}
+          }
+          preConfigureHooks+=(_platformioSetupHook)
+        ''
+      );
+in
+hook

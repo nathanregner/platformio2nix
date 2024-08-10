@@ -93,7 +93,7 @@ async fn main() -> eyre::Result<()> {
         lockfile.insert(dependency);
     }
 
-    println!("{}", serde_json::to_string_pretty(&lockfile)?);
+    println!("{}", toml::to_string_pretty(&lockfile)?);
 
     Ok(())
 }

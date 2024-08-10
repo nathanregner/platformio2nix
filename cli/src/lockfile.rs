@@ -67,46 +67,49 @@ pub struct Dependency {
     pub install_path: String,
     pub version: semver::Version,
     pub manifest: String,
-    pub systems: BTreeMap<NixSystem, FetchUrl>,
+    pub src: Src,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(tag = "external")]
+pub enum Src {
+    Universal(FetchUrl),
+    PlatformSpecific(BTreeMap<NixSystem, FetchUrl>),
 }
 
 impl Dependency {
     pub fn from_url(manifest: &Manifest, package_spec: &ExternalSpec, sha256: &[u8]) -> Self {
-        let systems = NixSystem::ALL
-            .iter()
-            .map(|nix_system| (*nix_system, FetchUrl::new(package_spec.uri.clone(), sha256)))
-            .collect();
         Self::new(
             manifest,
             package_spec.name.clone(),
             manifest.version.clone(),
-            systems,
+            Src::Universal(FetchUrl::new(package_spec.uri.clone(), sha256)),
         )
     }
 
     pub fn from_registry(manifest: &Manifest, package_spec: &registry::PackageSpec) -> Self {
         let version = &package_spec.version;
-        let systems = NixSystem::ALL
-            .iter()
-            .filter_map(|nix_system| {
-                let file = version.supports(&nix_system.to_registry());
-                file.map(|file| (*nix_system, FetchUrl::from(file)))
-            })
-            .collect();
+        let src = match version.universal() {
+            Some(file) => Src::Universal(FetchUrl::from(file)),
+            None => Src::PlatformSpecific(
+                NixSystem::ALL
+                    .iter()
+                    .filter_map(|nix_system| {
+                        let file = version.supports(&nix_system.to_registry());
+                        file.map(|file| (*nix_system, FetchUrl::from(file)))
+                    })
+                    .collect(),
+            ),
+        };
         Self::new(
             manifest,
             package_spec.name.clone(),
             version.name.clone(),
-            systems,
+            src,
         )
     }
 
-    fn new(
-        manifest: &Manifest,
-        name: String,
-        version: semver::Version,
-        systems: BTreeMap<NixSystem, FetchUrl>,
-    ) -> Self {
+    fn new(manifest: &Manifest, name: String, version: semver::Version, src: Src) -> Self {
         let install_path = format!(
             "{}/{}",
             match manifest.ty {
@@ -121,7 +124,7 @@ impl Dependency {
             install_path,
             manifest: serde_json::to_string(&manifest).expect("serializable manifest"),
             version,
-            systems,
+            src,
         }
     }
 }
