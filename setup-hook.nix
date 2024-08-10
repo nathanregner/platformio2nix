@@ -15,10 +15,14 @@
 let
   initialDeps = builtins.mapAttrs (
     _: dep:
+    let
+      throwSystem = throw "${dep.name} unsupported system: ${stdenv.system}";
+      src = dep.systems.${stdenv.system} or throwSystem;
+    in
     stdenv.mkDerivation {
       pname = dep.name;
       version = dep.version;
-      src = fetchurl dep.systems.${stdenv.system};
+      src = fetchurl src;
       sourceRoot = ".";
 
       env.MANIFEST = dep.manifest;
@@ -75,4 +79,9 @@ makeSetupHook
       }
       preConfigureHooks+=(_platformioSetupHook)
     ''
+    // {
+      passthru = {
+        inherit finalDeps;
+      };
+    }
   )
