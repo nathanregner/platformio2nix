@@ -1036,7 +1036,6 @@ dependencies = [
  "http-cache-reqwest",
  "reqwest",
  "reqwest-middleware",
- "semver",
  "serde",
  "serde_json",
  "serde_path_to_error",
@@ -1258,15 +1257,6 @@ checksum = "ea4a292869320c0272d7bc55a5a6aafaff59b4f63404a003887b679a2e05b4b6"
 dependencies = [
  "core-foundation-sys",
  "libc",
-]
-
-[[package]]
-name = "semver"
-version = "1.0.23"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61697e0a1c7e512e84a621326239844a24d8207b4669b41bc18b32ea5cbf988b"
-dependencies = [
- "serde",
 ]
 
 [[package]]
