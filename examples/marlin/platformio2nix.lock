@@ -5,7 +5,7 @@
       "name": "atmelavr",
       "install_path": "platforms/atmelavr",
       "version": "4.0.1",
-      "manifest": "{\"type\":\"platform\",\"version\":\"4.0.1\",\"spec\":{\"owner\":\"platformio\",\"name\":\"atmelavr\",\"uri\":null,\"id\":8006,\"requirements\":null},\"name\":\"atmelavr\"}",
+      "manifest": "{\"type\":\"platform\",\"version\":\"4.0.1\",\"spec\":{\"owner\":\"platformio\",\"name\":\"atmelavr\",\"id\":8006,\"requirements\":null,\"uri\":null},\"name\":\"atmelavr\"}",
       "systems": {
         "aarch64-linux": {
           "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/4.0.1/atmelavr-4.0.1.tar.gz",
@@ -29,7 +29,7 @@
       "name": "framework-arduino-avr",
       "install_path": "packages/framework-arduino-avr",
       "version": "5.1.0",
-      "manifest": "{\"type\":\"tool\",\"version\":\"5.1.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"framework-arduino-avr\",\"uri\":null,\"requirements\":null,\"id\":8039},\"name\":\"framework-arduino-avr\"}",
+      "manifest": "{\"type\":\"tool\",\"version\":\"5.1.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"framework-arduino-avr\",\"id\":8039,\"requirements\":null,\"uri\":null},\"name\":\"framework-arduino-avr\"}",
       "systems": {
         "aarch64-linux": {
           "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduino-avr/5.1.0/framework-arduino-avr-5.1.0.tar.gz",
@@ -52,24 +52,24 @@
     "tool-scons": {
       "name": "tool-scons",
       "install_path": "packages/tool-scons",
-      "version": "4.40502.0",
-      "manifest": "{\"type\":\"tool\",\"version\":\"4.40502.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"tool-scons\",\"requirements\":null,\"id\":8192,\"uri\":null},\"name\":\"tool-scons\"}",
+      "version": "4.40700.0",
+      "manifest": "{\"type\":\"tool\",\"version\":\"4.40700.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"tool-scons\",\"id\":8192,\"requirements\":null,\"uri\":null},\"name\":\"tool-scons\"}",
       "systems": {
         "aarch64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40502.0/tool-scons-4.40502.0.tar.gz",
-          "hash": "sha256-6WGOHHj5JnIJXfiEm5Kj4Hyg/BFv8jH/FRRwAjhs2zU="
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
+          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
         },
         "aarch64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40502.0/tool-scons-4.40502.0.tar.gz",
-          "hash": "sha256-6WGOHHj5JnIJXfiEm5Kj4Hyg/BFv8jH/FRRwAjhs2zU="
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
+          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
         },
         "x86_64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40502.0/tool-scons-4.40502.0.tar.gz",
-          "hash": "sha256-6WGOHHj5JnIJXfiEm5Kj4Hyg/BFv8jH/FRRwAjhs2zU="
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
+          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
         },
         "x86_64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40502.0/tool-scons-4.40502.0.tar.gz",
-          "hash": "sha256-6WGOHHj5JnIJXfiEm5Kj4Hyg/BFv8jH/FRRwAjhs2zU="
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
+          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
         }
       }
     },
