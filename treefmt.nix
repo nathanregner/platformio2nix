@@ -1,14 +1,10 @@
-{ rustfmt }:
 { ... }:
 {
   projectRootFile = "flake.nix";
 
-  programs.rustfmt = {
-    enable = true;
-    package = rustfmt;
+  programs = {
+    nixfmt.enable = true;
+    rustfmt.enable = true;
+    taplo.enable = true;
   };
-
-  programs.taplo.enable = true;
-
-  programs.nixfmt.enable = true;
 }
