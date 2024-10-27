@@ -1,0 +1,246 @@
+{
+  "id": 7229,
+  "type": "library",
+  "tier": "community",
+  "owner": {
+    "username": "askuric",
+    "firstname": "Antun",
+    "lastname": "Skuric",
+    "is_org": false
+  },
+  "name": "Simple FOC",
+  "description": "A library demistifying FOC for BLDC motors. Simple library intended for hobby comunity to run the BLDC and Stepper motor using FOC algorithm. It is intended to support as many BLDC/Stepper motor+sensor+driver combinations as possible and in the same time maintain simplicity of usage. Library supports Arudino devices such as Arduino UNO, MEGA, NANO and similar, stm32 boards such as Nucleo and Bluepill, ESP32 and Teensy boards.",
+  "added_at": "2020-04-11T16:38:49Z",
+  "updated_at": "2024-07-21T17:15:01Z",
+  "modified_at": "2024-07-21T13:13:21Z",
+  "downloads_trend": -174,
+  "popularity_trend": -1,
+  "popularity_rank": 148,
+  "open_issues_count": 72,
+  "stars_count": 1961,
+  "examples_count": 64,
+  "title": null,
+  "license": "MIT",
+  "homepage": "https://docs.simplefoc.com",
+  "repository_url": "https://github.com/simplefoc/Arduino-FOC.git",
+  "keywords": ["device", "control"],
+  "authors": [
+    { "maintainer": true, "email": "info@simplefoc.com", "name": "Simplefoc" }
+  ],
+  "headers": [
+    "BLDCDriver3PWM.h",
+    "BLDCDriver6PWM.h",
+    "BLDCMotor.h",
+    "Commander.h",
+    "Encoder.h",
+    "HallSensor.h",
+    "InlineCurrentSense.h",
+    "LowsideCurrentSense.h",
+    "MagneticSensorAnalog.h",
+    "MagneticSensorI2C.h",
+    "MagneticSensorPWM.h",
+    "MagneticSensorSPI.h",
+    "SimpleFOC.h",
+    "StepDirListener.h",
+    "StepperDriver2PWM.h",
+    "StepperDriver4PWM.h",
+    "StepperMotor.h",
+    "commands.h",
+    "defaults.h",
+    "foc_utils.h",
+    "hardware_api.h",
+    "lowpass_filter.h",
+    "pid.h",
+    "time_utils.h"
+  ],
+  "frameworks": ["arduino"],
+  "platforms": ["*"],
+  "dependencies_count": 0,
+  "dependents_count": 3,
+  "top_dependencies": [],
+  "top_dependents": [
+    {
+      "id": 13496,
+      "type": "library",
+      "owner": { "username": "simplefoc" },
+      "name": "SimpleFOCDrivers"
+    },
+    {
+      "id": 15220,
+      "type": "library",
+      "owner": { "username": "simplefoc" },
+      "name": "SimpleDCMotor"
+    },
+    {
+      "id": 11678,
+      "type": "library",
+      "owner": { "username": "jschoch" },
+      "name": "Hap"
+    }
+  ],
+  "version": {
+    "id": 38940,
+    "name": "2.2",
+    "unpacked_size": 597078,
+    "released_at": "2021-10-02T18:57:37Z",
+    "files": [
+      {
+        "name": "SimpleFOC-2.2.tar.gz",
+        "size": 119012,
+        "checksum": {
+          "sha256": "268b700b07aa7b8f42307d20d9a4145480423e8caf3f72d05fcb26e92e838d88"
+        },
+        "system": "*",
+        "download_url": "https://dl.registry.platformio.org/download/askuric/library/Simple%20FOC/2.2/SimpleFOC-2.2.tar.gz"
+      }
+    ],
+    "is_latest": false
+  },
+  "versions": [
+    {
+      "id": 64412,
+      "name": "2.3.4",
+      "unpacked_size": 1017464,
+      "released_at": "2024-07-21T13:13:12Z",
+      "files": [
+        {
+          "name": "SimpleFOC-2.3.4.tar.gz",
+          "size": 188789,
+          "checksum": {
+            "sha256": "8bbdafd893f6d9f4eaa9a6187ebbc9ae1299e4d254027a1de643f03b36a2e4fe"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/askuric/library/Simple%20FOC/2.3.4/SimpleFOC-2.3.4.tar.gz"
+        }
+      ],
+      "is_latest": true
+    },
+    {
+      "id": 61865,
+      "name": "2.3.3",
+      "unpacked_size": 973245,
+      "released_at": "2024-04-19T18:26:27Z",
+      "files": [
+        {
+          "name": "SimpleFOC-2.3.3.tar.gz",
+          "size": 176935,
+          "checksum": {
+            "sha256": "85e5beeacc541e07c766519d7107a55147f7ed5667abb09a100fba4d3a9fe418"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/askuric/library/Simple%20FOC/2.3.3/SimpleFOC-2.3.3.tar.gz"
+        }
+      ],
+      "is_latest": false
+    },
+    {
+      "id": 57896,
+      "name": "2.3.2",
+      "unpacked_size": 909413,
+      "released_at": "2023-12-01T22:19:22Z",
+      "files": [
+        {
+          "name": "SimpleFOC-2.3.2.tar.gz",
+          "size": 166923,
+          "checksum": {
+            "sha256": "583d7d46db18ba00ee4193211028be3efd1014078a0a1c37272e396773a56a80"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/askuric/library/Simple%20FOC/2.3.2/SimpleFOC-2.3.2.tar.gz"
+        }
+      ],
+      "is_latest": false
+    },
+    {
+      "id": 55824,
+      "name": "2.3.1",
+      "unpacked_size": 909212,
+      "released_at": "2023-09-23T08:51:26Z",
+      "files": [
+        {
+          "name": "SimpleFOC-2.3.1.tar.gz",
+          "size": 167290,
+          "checksum": {
+            "sha256": "8576c53d9c8e5f1155be38f69d73fb75688f7d32f701746ee27f332995de20d0"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/askuric/library/Simple%20FOC/2.3.1/SimpleFOC-2.3.1.tar.gz"
+        }
+      ],
+      "is_latest": false
+    },
+    {
+      "id": 51688,
+      "name": "2.3.0",
+      "unpacked_size": 877598,
+      "released_at": "2023-03-18T12:00:31Z",
+      "files": [
+        {
+          "name": "SimpleFOC-2.3.0.tar.gz",
+          "size": 160894,
+          "checksum": {
+            "sha256": "6612fbbd787bc130942e0e16c37a60f0716294a1f876315a92fb36ee58f11232"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/askuric/library/Simple%20FOC/2.3.0/SimpleFOC-2.3.0.tar.gz"
+        }
+      ],
+      "is_latest": false
+    },
+    {
+      "id": 47614,
+      "name": "2.2.3",
+      "unpacked_size": 786611,
+      "released_at": "2022-10-15T09:02:08Z",
+      "files": [
+        {
+          "name": "SimpleFOC-2.2.3.tar.gz",
+          "size": 147144,
+          "checksum": {
+            "sha256": "973c3268774850df58a381bb6db2b2882c24eb0c72b137f25cff4c4c2667dc27"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/askuric/library/Simple%20FOC/2.2.3/SimpleFOC-2.2.3.tar.gz"
+        }
+      ],
+      "is_latest": false
+    },
+    {
+      "id": 42000,
+      "name": "2.2.1",
+      "unpacked_size": 646667,
+      "released_at": "2022-02-03T17:03:10Z",
+      "files": [
+        {
+          "name": "SimpleFOC-2.2.1.tar.gz",
+          "size": 126739,
+          "checksum": {
+            "sha256": "ad3390206d86afcb4f42371b6ddbca12a5d32be8c2125898b8e73dc48f922eec"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/askuric/library/Simple%20FOC/2.2.1/SimpleFOC-2.2.1.tar.gz"
+        }
+      ],
+      "is_latest": false
+    },
+    {
+      "id": 38940,
+      "name": "2.2",
+      "unpacked_size": 597078,
+      "released_at": "2021-10-02T18:57:37Z",
+      "files": [
+        {
+          "name": "SimpleFOC-2.2.tar.gz",
+          "size": 119012,
+          "checksum": {
+            "sha256": "268b700b07aa7b8f42307d20d9a4145480423e8caf3f72d05fcb26e92e838d88"
+          },
+          "system": "*",
+          "download_url": "https://dl.registry.platformio.org/download/askuric/library/Simple%20FOC/2.2/SimpleFOC-2.2.tar.gz"
+        }
+      ],
+      "is_latest": false
+    }
+  ],
+  "readme_url": "https://dl.registry.platformio.org/libraries/36/58/812fff96102dd2e13cb023d192ca53d7e35ad896a25554cade4bf31b01e2/README.md"
+}

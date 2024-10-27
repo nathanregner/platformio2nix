@@ -65,7 +65,7 @@ impl NixSystem {
 pub struct Dependency {
     pub name: String,
     pub install_path: String,
-    pub version: semver::Version,
+    pub version: String,
     pub manifest: String,
     pub systems: BTreeMap<NixSystem, FetchUrl>,
 }
@@ -104,7 +104,7 @@ impl Dependency {
     fn new(
         manifest: &Manifest,
         name: String,
-        version: semver::Version,
+        version: String,
         systems: BTreeMap<NixSystem, FetchUrl>,
     ) -> Self {
         let install_path = format!(

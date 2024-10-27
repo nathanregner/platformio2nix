@@ -29,7 +29,7 @@ impl PackageType {
 pub struct Manifest {
     #[serde(rename = "type")]
     pub ty: PackageType,
-    pub version: semver::Version,
+    pub version: String,
     pub spec: PackageSpec,
 
     #[serde(flatten)]

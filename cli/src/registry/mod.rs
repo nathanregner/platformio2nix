@@ -180,7 +180,7 @@ pub struct PackageSpec {
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct VersionSpec {
-    pub name: semver::Version,
+    pub name: String,
     pub files: Vec<File>,
 }
 
@@ -412,4 +412,20 @@ mod tests {
         let version = spec.pick_latest_compatible("~1".parse().unwrap(), &System::LinuxX86_64);
         assert_eq!(version.map(|v| &v.name), Some(&"1.1.0".parse().unwrap()));
     } */
+
+    #[test]
+    fn deserialize_lib_package_spec_invalid_semver() {
+        let json = include_str!("./test/simplefoc.json");
+        let de = &mut serde_json::Deserializer::from_str(json);
+        let spec = serde_path_to_error::deserialize::<_, PackageSpec>(de);
+        // TODO: snapshot test?
+        match spec {
+            Ok(spec) => {
+                println!("{:?}", spec);
+            }
+            Err(err) => {
+                panic!("failed to deserialize: {err}");
+            }
+        }
+    }
 }
