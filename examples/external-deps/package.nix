@@ -1,5 +1,6 @@
 {
   gnumake,
+  libarchive,
   makePlatformIOSetupHook,
   platformio,
   stdenv,
@@ -11,7 +12,14 @@ let
   setupHook = makePlatformIOSetupHook {
     lockfile = ./platformio2nix.lock;
     overrides = (
-      final: prev: { SlowSoftWire = prev.SlowSoftWire.overrideAttrs { dontUnpack = true; }; }
+      final: prev: {
+        SlowSoftWire = prev.SlowSoftWire.overrideAttrs {
+          nativeBuildInputs = [ libarchive ];
+          unpackPhase = ''
+            bsdtar xf $src --strip-components=1
+          '';
+        };
+      }
     );
   };
 in

@@ -1,75 +1,75 @@
 {
   "version": "V1",
   "dependencies": {
-    "SlowSoftWire": {
-      "name": "SlowSoftWire",
-      "install_path": "lib/SlowSoftWire",
-      "version": "0.0.0+20240705183635",
-      "manifest": "{\"type\":\"library\",\"version\":\"0.0.0+20240705183635\",\"spec\":{\"name\":\"SlowSoftWire\",\"uri\":\"https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip\",\"id\":null,\"owner\":null,\"requirements\":null},\"name\":\"SlowSoftWire\"}",
+    "SlowSoftI2CMaster": {
+      "name": "SlowSoftI2CMaster",
+      "install_path": "libdeps/SlowSoftI2CMaster",
+      "version": "1.0.0",
+      "manifest": "{\"type\":\"library\",\"version\":\"1.0.0\",\"spec\":{\"owner\":\"felias-fogg\",\"name\":\"SlowSoftI2CMaster\",\"id\":7005,\"requirements\":null,\"uri\":null},\"name\":\"SlowSoftI2CMaster\"}",
       "systems": {
         "aarch64-linux": {
-          "url": "https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip",
-          "hash": "sha256-FhoHDjfPYRlWeJZig5cz12iPYbL6j0bEivR1+qNmXLc="
+          "url": "https://dl.registry.platformio.org/download/felias-fogg/library/SlowSoftI2CMaster/1.0.0/SlowSoftI2CMaster-1.0.0.tar.gz",
+          "hash": "sha256-DVPlZAOtAd0/zMgiKk76A0pGyI2MHGSbZsgvJAjt/bY="
         },
         "aarch64-darwin": {
-          "url": "https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip",
-          "hash": "sha256-FhoHDjfPYRlWeJZig5cz12iPYbL6j0bEivR1+qNmXLc="
+          "url": "https://dl.registry.platformio.org/download/felias-fogg/library/SlowSoftI2CMaster/1.0.0/SlowSoftI2CMaster-1.0.0.tar.gz",
+          "hash": "sha256-DVPlZAOtAd0/zMgiKk76A0pGyI2MHGSbZsgvJAjt/bY="
         },
         "x86_64-linux": {
-          "url": "https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip",
-          "hash": "sha256-FhoHDjfPYRlWeJZig5cz12iPYbL6j0bEivR1+qNmXLc="
+          "url": "https://dl.registry.platformio.org/download/felias-fogg/library/SlowSoftI2CMaster/1.0.0/SlowSoftI2CMaster-1.0.0.tar.gz",
+          "hash": "sha256-DVPlZAOtAd0/zMgiKk76A0pGyI2MHGSbZsgvJAjt/bY="
         },
         "x86_64-darwin": {
-          "url": "https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip",
-          "hash": "sha256-FhoHDjfPYRlWeJZig5cz12iPYbL6j0bEivR1+qNmXLc="
+          "url": "https://dl.registry.platformio.org/download/felias-fogg/library/SlowSoftI2CMaster/1.0.0/SlowSoftI2CMaster-1.0.0.tar.gz",
+          "hash": "sha256-DVPlZAOtAd0/zMgiKk76A0pGyI2MHGSbZsgvJAjt/bY="
         }
       }
     },
-    "U8glib-HAL": {
-      "name": "U8glib-HAL",
-      "install_path": "lib/U8glib-HAL",
-      "version": "0.5.4",
-      "manifest": "{\"type\":\"library\",\"version\":\"0.5.4\",\"spec\":{\"owner\":\"marlinfirmware\",\"name\":\"U8glib-HAL\",\"uri\":null,\"requirements\":null,\"id\":1932},\"name\":\"U8glib-HAL\"}",
+    "SlowSoftWire": {
+      "name": "SlowSoftWire",
+      "install_path": "libdeps/SlowSoftWire",
+      "version": "0.0.0+20241026221146",
+      "manifest": "{\"type\":\"library\",\"version\":\"0.0.0+20241026221146\",\"spec\":{\"name\":\"SlowSoftWire\",\"uri\":\"https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip\",\"id\":null,\"owner\":null,\"requirements\":null},\"name\":\"SlowSoftWire\"}",
       "systems": {
         "aarch64-linux": {
-          "url": "https://dl.registry.platformio.org/download/marlinfirmware/library/U8glib-HAL/0.5.4/U8glib-HAL-0.5.4.tar.gz",
-          "hash": "sha256-DKdiN3zS2NXY94fY4IRwm/5SiI0xeGiJdahXb7X9Sak="
+          "url": "https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip",
+          "hash": "sha256-FhoHDjfPYRlWeJZig5cz12iPYbL6j0bEivR1+qNmXLc="
         },
         "aarch64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/marlinfirmware/library/U8glib-HAL/0.5.4/U8glib-HAL-0.5.4.tar.gz",
-          "hash": "sha256-DKdiN3zS2NXY94fY4IRwm/5SiI0xeGiJdahXb7X9Sak="
+          "url": "https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip",
+          "hash": "sha256-FhoHDjfPYRlWeJZig5cz12iPYbL6j0bEivR1+qNmXLc="
         },
         "x86_64-linux": {
-          "url": "https://dl.registry.platformio.org/download/marlinfirmware/library/U8glib-HAL/0.5.4/U8glib-HAL-0.5.4.tar.gz",
-          "hash": "sha256-DKdiN3zS2NXY94fY4IRwm/5SiI0xeGiJdahXb7X9Sak="
+          "url": "https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip",
+          "hash": "sha256-FhoHDjfPYRlWeJZig5cz12iPYbL6j0bEivR1+qNmXLc="
         },
         "x86_64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/marlinfirmware/library/U8glib-HAL/0.5.4/U8glib-HAL-0.5.4.tar.gz",
-          "hash": "sha256-DKdiN3zS2NXY94fY4IRwm/5SiI0xeGiJdahXb7X9Sak="
+          "url": "https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip",
+          "hash": "sha256-FhoHDjfPYRlWeJZig5cz12iPYbL6j0bEivR1+qNmXLc="
         }
       }
     },
     "atmelavr": {
       "name": "atmelavr",
       "install_path": "platforms/atmelavr",
-      "version": "5.0.0",
-      "manifest": "{\"type\":\"platform\",\"version\":\"5.0.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"atmelavr\",\"uri\":null,\"id\":8006,\"requirements\":null},\"name\":\"atmelavr\"}",
+      "version": "5.1.0",
+      "manifest": "{\"type\":\"platform\",\"version\":\"5.1.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"atmelavr\",\"id\":8006,\"requirements\":null,\"uri\":null},\"name\":\"atmelavr\"}",
       "systems": {
         "aarch64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.0.0/atmelavr-5.0.0.tar.gz",
-          "hash": "sha256-9PIuBFDJT7XZLWKGTm/nFCgbuFWAzZO8sVmthopmsWw="
+          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.1.0/atmelavr-5.1.0.tar.gz",
+          "hash": "sha256-0XGSJi0KwN04/98qUTlzkmYtm1K95fc4JWJoYIhLQhk="
         },
         "aarch64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.0.0/atmelavr-5.0.0.tar.gz",
-          "hash": "sha256-9PIuBFDJT7XZLWKGTm/nFCgbuFWAzZO8sVmthopmsWw="
+          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.1.0/atmelavr-5.1.0.tar.gz",
+          "hash": "sha256-0XGSJi0KwN04/98qUTlzkmYtm1K95fc4JWJoYIhLQhk="
         },
         "x86_64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.0.0/atmelavr-5.0.0.tar.gz",
-          "hash": "sha256-9PIuBFDJT7XZLWKGTm/nFCgbuFWAzZO8sVmthopmsWw="
+          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.1.0/atmelavr-5.1.0.tar.gz",
+          "hash": "sha256-0XGSJi0KwN04/98qUTlzkmYtm1K95fc4JWJoYIhLQhk="
         },
         "x86_64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.0.0/atmelavr-5.0.0.tar.gz",
-          "hash": "sha256-9PIuBFDJT7XZLWKGTm/nFCgbuFWAzZO8sVmthopmsWw="
+          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.1.0/atmelavr-5.1.0.tar.gz",
+          "hash": "sha256-0XGSJi0KwN04/98qUTlzkmYtm1K95fc4JWJoYIhLQhk="
         }
       }
     },
@@ -77,7 +77,7 @@
       "name": "framework-arduino-avr",
       "install_path": "packages/framework-arduino-avr",
       "version": "5.2.0",
-      "manifest": "{\"type\":\"tool\",\"version\":\"5.2.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"framework-arduino-avr\",\"requirements\":null,\"uri\":null,\"id\":8039},\"name\":\"framework-arduino-avr\"}",
+      "manifest": "{\"type\":\"tool\",\"version\":\"5.2.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"framework-arduino-avr\",\"id\":8039,\"requirements\":null,\"uri\":null},\"name\":\"framework-arduino-avr\"}",
       "systems": {
         "aarch64-linux": {
           "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduino-avr/5.2.0/framework-arduino-avr-5.2.0.tar.gz",
@@ -94,102 +94,30 @@
         "x86_64-darwin": {
           "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduino-avr/5.2.0/framework-arduino-avr-5.2.0.tar.gz",
           "hash": "sha256-caP+gsutiVwQ2oCsd/guUMdxsR26Iabi+dIbxTr0ARY="
-        }
-      }
-    },
-    "framework-arduinoststm32": {
-      "name": "framework-arduinoststm32",
-      "install_path": "packages/framework-arduinoststm32",
-      "version": "4.10900.200819",
-      "manifest": "{\"type\":\"tool\",\"version\":\"4.10900.200819\",\"spec\":{\"owner\":\"platformio\",\"name\":\"framework-arduinoststm32\",\"requirements\":null,\"uri\":null,\"id\":8080},\"name\":\"framework-arduinoststm32\"}",
-      "systems": {
-        "aarch64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduinoststm32/4.10900.200819/framework-arduinoststm32-4.10900.200819.tar.gz",
-          "hash": "sha256-ztdXAF7AS6v44rvprXky+0CuZczhhYVN6QniL9jlM00="
-        },
-        "aarch64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduinoststm32/4.10900.200819/framework-arduinoststm32-4.10900.200819.tar.gz",
-          "hash": "sha256-ztdXAF7AS6v44rvprXky+0CuZczhhYVN6QniL9jlM00="
-        },
-        "x86_64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduinoststm32/4.10900.200819/framework-arduinoststm32-4.10900.200819.tar.gz",
-          "hash": "sha256-ztdXAF7AS6v44rvprXky+0CuZczhhYVN6QniL9jlM00="
-        },
-        "x86_64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduinoststm32/4.10900.200819/framework-arduinoststm32-4.10900.200819.tar.gz",
-          "hash": "sha256-ztdXAF7AS6v44rvprXky+0CuZczhhYVN6QniL9jlM00="
-        }
-      }
-    },
-    "framework-cmsis": {
-      "name": "framework-cmsis",
-      "install_path": "packages/framework-cmsis",
-      "version": "2.50501.200527",
-      "manifest": "{\"type\":\"tool\",\"version\":\"2.50501.200527\",\"spec\":{\"owner\":\"platformio\",\"name\":\"framework-cmsis\",\"requirements\":null,\"id\":8086,\"uri\":null},\"name\":\"framework-cmsis\"}",
-      "systems": {
-        "aarch64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-cmsis/2.50501.200527/framework-cmsis-2.50501.200527.tar.gz",
-          "hash": "sha256-3ErJUB7dfsV0aUt7UhFD7eCng8TO42TuwlW0GGa+7Po="
-        },
-        "aarch64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-cmsis/2.50501.200527/framework-cmsis-2.50501.200527.tar.gz",
-          "hash": "sha256-3ErJUB7dfsV0aUt7UhFD7eCng8TO42TuwlW0GGa+7Po="
-        },
-        "x86_64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-cmsis/2.50501.200527/framework-cmsis-2.50501.200527.tar.gz",
-          "hash": "sha256-3ErJUB7dfsV0aUt7UhFD7eCng8TO42TuwlW0GGa+7Po="
-        },
-        "x86_64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-cmsis/2.50501.200527/framework-cmsis-2.50501.200527.tar.gz",
-          "hash": "sha256-3ErJUB7dfsV0aUt7UhFD7eCng8TO42TuwlW0GGa+7Po="
-        }
-      }
-    },
-    "ststm32": {
-      "name": "ststm32",
-      "install_path": "platforms/ststm32",
-      "version": "12.1.1",
-      "manifest": "{\"type\":\"platform\",\"version\":\"12.1.1\",\"spec\":{\"owner\":\"platformio\",\"name\":\"ststm32\",\"uri\":null,\"id\":8020,\"requirements\":null},\"name\":\"ststm32\"}",
-      "systems": {
-        "aarch64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/platform/ststm32/12.1.1/ststm32-12.1.1.tar.gz",
-          "hash": "sha256-TYRfQCSqDtztp4yT9wNX+fGxpjyFwrL36TCOVv+XJxg="
-        },
-        "aarch64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/platform/ststm32/12.1.1/ststm32-12.1.1.tar.gz",
-          "hash": "sha256-TYRfQCSqDtztp4yT9wNX+fGxpjyFwrL36TCOVv+XJxg="
-        },
-        "x86_64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/platform/ststm32/12.1.1/ststm32-12.1.1.tar.gz",
-          "hash": "sha256-TYRfQCSqDtztp4yT9wNX+fGxpjyFwrL36TCOVv+XJxg="
-        },
-        "x86_64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/platform/ststm32/12.1.1/ststm32-12.1.1.tar.gz",
-          "hash": "sha256-TYRfQCSqDtztp4yT9wNX+fGxpjyFwrL36TCOVv+XJxg="
         }
       }
     },
     "tool-scons": {
       "name": "tool-scons",
       "install_path": "packages/tool-scons",
-      "version": "4.40502.0",
-      "manifest": "{\"type\":\"tool\",\"version\":\"4.40502.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"tool-scons\",\"requirements\":null,\"id\":8192,\"uri\":null},\"name\":\"tool-scons\"}",
+      "version": "4.40700.0",
+      "manifest": "{\"type\":\"tool\",\"version\":\"4.40700.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"tool-scons\",\"id\":8192,\"requirements\":null,\"uri\":null},\"name\":\"tool-scons\"}",
       "systems": {
         "aarch64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40502.0/tool-scons-4.40502.0.tar.gz",
-          "hash": "sha256-6WGOHHj5JnIJXfiEm5Kj4Hyg/BFv8jH/FRRwAjhs2zU="
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
+          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
         },
         "aarch64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40502.0/tool-scons-4.40502.0.tar.gz",
-          "hash": "sha256-6WGOHHj5JnIJXfiEm5Kj4Hyg/BFv8jH/FRRwAjhs2zU="
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
+          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
         },
         "x86_64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40502.0/tool-scons-4.40502.0.tar.gz",
-          "hash": "sha256-6WGOHHj5JnIJXfiEm5Kj4Hyg/BFv8jH/FRRwAjhs2zU="
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
+          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
         },
         "x86_64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40502.0/tool-scons-4.40502.0.tar.gz",
-          "hash": "sha256-6WGOHHj5JnIJXfiEm5Kj4Hyg/BFv8jH/FRRwAjhs2zU="
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
+          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
         }
       }
     },
@@ -197,7 +125,7 @@
       "name": "toolchain-atmelavr",
       "install_path": "packages/toolchain-atmelavr",
       "version": "1.70300.191015",
-      "manifest": "{\"type\":\"tool\",\"version\":\"1.70300.191015\",\"spec\":{\"owner\":\"platformio\",\"name\":\"toolchain-atmelavr\",\"uri\":null,\"id\":8203,\"requirements\":null},\"name\":\"toolchain-atmelavr\"}",
+      "manifest": "{\"type\":\"tool\",\"version\":\"1.70300.191015\",\"spec\":{\"owner\":\"platformio\",\"name\":\"toolchain-atmelavr\",\"id\":8203,\"requirements\":null,\"uri\":null},\"name\":\"toolchain-atmelavr\"}",
       "systems": {
         "aarch64-linux": {
           "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-linux_aarch64-1.70300.191015.tar.gz",
@@ -214,26 +142,6 @@
         "x86_64-darwin": {
           "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-darwin_x86_64-1.70300.191015.tar.gz",
           "hash": "sha256-ZbvIZjFjRU9nj5WSqnRdLvfjvphlS1kIMAmvVmSKBvI="
-        }
-      }
-    },
-    "toolchain-gccarmnoneeabi": {
-      "name": "toolchain-gccarmnoneeabi",
-      "install_path": "packages/toolchain-gccarmnoneeabi",
-      "version": "1.90201.191206",
-      "manifest": "{\"type\":\"tool\",\"version\":\"1.90201.191206\",\"spec\":{\"owner\":\"platformio\",\"name\":\"toolchain-gccarmnoneeabi\",\"requirements\":null,\"id\":8207,\"uri\":null},\"name\":\"toolchain-gccarmnoneeabi\"}",
-      "systems": {
-        "aarch64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi/1.90201.191206/toolchain-gccarmnoneeabi-darwin_x86_64-1.90201.191206.tar.gz",
-          "hash": "sha256-MJ+3zVwbEvG6japvdVTMlclqgSRrb/SDPLsxQ2+Pat0="
-        },
-        "x86_64-linux": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi/1.90201.191206/toolchain-gccarmnoneeabi-linux_x86_64-1.90201.191206.tar.gz",
-          "hash": "sha256-FA+yY3mLncGVCzgxxE2asBGW+IMBK3hlix4AK5A10mw="
-        },
-        "x86_64-darwin": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi/1.90201.191206/toolchain-gccarmnoneeabi-darwin_x86_64-1.90201.191206.tar.gz",
-          "hash": "sha256-MJ+3zVwbEvG6japvdVTMlclqgSRrb/SDPLsxQ2+Pat0="
         }
       }
     }
