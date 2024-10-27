@@ -4,20 +4,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-
-    # rust
-    crane.url = "github:ipetkov/crane";
-
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # checks/formatting
-    advisory-db = {
-      url = "github:rustsec/advisory-db";
-      flake = false;
-    };
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -26,128 +12,74 @@
 
   outputs =
     {
-      self,
       nixpkgs,
-      advisory-db,
-      crane,
-      flake-utils,
-      rust-overlay,
+      flake-parts,
       treefmt-nix,
       ...
-    }:
-    flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [ (import rust-overlay) ];
-        };
+    }@inputs:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [
+        "aarch64-darwin"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "x86_64-linux"
+      ];
+      imports = [ inputs.treefmt-nix.flakeModule ];
 
-        inherit (pkgs) lib;
+      perSystem =
+        {
+          config,
+          system,
+          inputs',
+          pkgs,
+          lib,
+          ...
+        }:
+        (
+          let
+            platformio2nix = pkgs.rustPlatform.buildRustPackage {
+              pname = "platformio2nix";
+              version = "0.1.1";
+              src = ./cli;
+              cargoLock.lockFile = ./cli/Cargo.lock;
 
-        rustToolchainWith =
-          extensions:
-          pkgs.rust-bin.selectLatestNightlyWith (
-            toolchain: toolchain.default.override { inherit extensions; }
-          );
-        rustToolchain = rustToolchainWith [ ];
-        craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
-        src = lib.cleanSourceWith {
-          src = craneLib.path ./cli;
-          filter =
-            path: type: builtins.match "^src/test.*" path != null || (craneLib.filterCargoSources path type);
-        };
+              nativeBuildInputs =
+                with pkgs;
+                [ pkg-config ] ++ lib.optionals stdenv.isDarwin [ darwin.apple_sdk.frameworks.SystemConfiguration ];
+              buildInputs = with pkgs; [ openssl ];
+            };
+          in
+          {
+            packages = rec {
+              default = platformio2nix;
+              inherit platformio2nix;
+            };
 
-        commonArgs = {
-          inherit src;
-          strictDeps = true;
-          nativeBuildInputs = (
-            with pkgs;
-            (
-              [ pkg-config ] ++ lib.optionals stdenv.isDarwin [ darwin.apple_sdk.frameworks.SystemConfiguration ]
-            )
-          );
-          buildInputs = (with pkgs; [ openssl ]);
-        };
+            treefmt = import ./treefmt.nix;
 
-        # Build *just* the cargo dependencies
-        cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+            devShells.default = pkgs.mkShell {
+              inherit (platformio2nix) nativeBuildInputs buildInputs;
+              packages = (
+                with pkgs;
+                [
+                  cargo
+                  clippy
+                  config.treefmt.build.wrapper
+                  rust-analyzer
+                  rustfmt
+                ]
+              );
 
-        # Build the actual crate itself, reusing the dependency artifacts from
-        # above
-        platformio2nix = craneLib.buildPackage (
-          commonArgs
-          // {
-            inherit cargoArtifacts;
-            doCheck = false;
+              LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.openssl ];
+              RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
+            };
           }
         );
 
-        treefmt = treefmt-nix.lib.evalModule pkgs (
-          import ./treefmt.nix { rustfmt = rustToolchain.passthru.availableComponents.rustfmt; }
-        );
-      in
-      {
-        checks = {
-          # Build the crate as part of `nix flake check` for convenience
-          crate = platformio2nix;
-
-          # Note that this is done as a separate derivation so that
-          # we can block the CI if there are issues here, but not
-          # prevent downstream consumers from building our crate by itself.
-          clippy = craneLib.cargoClippy (
-            commonArgs
-            // {
-              inherit cargoArtifacts;
-              cargoClippyExtraArgs = "--all-targets -- --deny warnings";
-            }
-          );
-
-          crate-doc = craneLib.cargoDoc (commonArgs // { inherit cargoArtifacts; });
-
-          # Check formatting
-          formatting = treefmt.config.build.check self;
-
-          # Audit dependencies
-          audit = craneLib.cargoAudit { inherit src advisory-db; };
-
-          # Audit licenses
-          deny = craneLib.cargoDeny { inherit src; };
-
-          # Run tests with cargo-nextest. Set `doCheck = false` to prevent tests running twice
-          nextest = craneLib.cargoNextest (commonArgs // { inherit cargoArtifacts; });
-
-          # Ensure that example builds
+      flake = {
+        overlays.default = final: prev: {
+          makePlatformIOSetupHook = final.callPackage ./setup-hook.nix { };
         };
-
-        packages = rec {
-          default = platformio2nix;
-          inherit platformio2nix;
-
-          makePlatformIOSetupHook = pkgs.callPackage ./setup-hook.nix { };
-        };
-
-        apps.default = flake-utils.lib.mkApp { drv = platformio2nix; };
-
-        formatter = treefmt.config.build.wrapper;
-
-        devShells.default =
-          let
-            rustToolchain = (
-              rustToolchainWith [
-                "rust-src"
-                "rust-analyzer"
-              ]
-            );
-          in
-          (craneLib.overrideToolchain rustToolchain).devShell {
-            checks = self.checks.${system}; # inherit inputs from checks
-            packages = [
-              treefmt.config.build.programs.nixfmt
-              pkgs.platformio
-            ];
-            RUST_SRC_PATH = "${rustToolchain.passthru.availableComponents.rust-src}";
-          };
-      }
-    );
+      };
+    };
 }

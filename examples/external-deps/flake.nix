@@ -22,13 +22,13 @@
       packages = forAllSystems (
         system:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [ platformio2nix.overlays.default ];
+          };
         in
         {
-          default = pkgs.callPackage ./package.nix {
-            # TODO: provide an overlay
-            inherit (platformio2nix.packages.${system}) makePlatformIOSetupHook;
-          };
+          default = pkgs.callPackage ./package.nix { };
         }
       );
     };
