@@ -86,20 +86,7 @@ impl RegistryClient {
         if let Some(version) = version {
             url.query_pairs_mut().append_pair("version", &version);
         }
-        // TODO: remove
-        eprintln!("url: {}", url);
-        let response = self.client.get(url).send().await?;
-        extract_json(response).await
-    }
-
-    pub async fn search(&self, params: SearchParams<'_>) -> eyre::Result<SearchResults> {
-        let mut url = self.registry_url.clone();
-        url.path_segments_mut()
-            .expect("base path")
-            .push("v3")
-            .push("search");
-        url.query_pairs_mut()
-            .append_pair("query", &params.to_query());
+        eprintln!("fetching package spec: {}", url);
         let response = self.client.get(url).send().await?;
         extract_json(response).await
     }
@@ -118,65 +105,11 @@ async fn extract_json<T: DeserializeOwned>(response: reqwest::Response) -> Resul
     Ok(body)
 }
 
-pub struct SearchParams<'s> {
-    pub names: &'s [&'s str],
-}
-
-impl<'s> SearchParams<'s> {
-    pub fn to_query(&self) -> String {
-        let mut query = String::new();
-        for name in self.names {
-            if !query.is_empty() {
-                query.push(' ');
-            }
-            query.push_str("name:");
-            query.push_str(&serde_json::to_string(name).expect("name is serializable"));
-        }
-        query
-    }
-}
-
-#[derive(Deserialize, Debug)]
-pub struct SearchResults {
-    pub items: Vec<PackageMeta>,
-}
-
-#[derive(Deserialize, Debug)]
-pub struct PackageMeta {
-    pub owner: PackageMetaOwner,
-    pub name: String,
-    #[serde(rename = "type")]
-    pub ty: String,
-    #[serde(rename = "version")]
-    pub latest_version: VersionSpec,
-}
-
-#[derive(Deserialize, Debug)]
-pub struct PackageMetaOwner {
-    pub username: String,
-}
-
 #[derive(Deserialize, Debug)]
 pub struct PackageSpec {
     pub name: String,
-    #[serde(rename = "type")]
-    pub ty: String,
     pub version: VersionSpec,
-    pub versions: Vec<VersionSpec>,
 }
-
-// impl PackageSpec {
-//     pub fn pick_latest_compatible(
-//         &self,
-//         version: VersionReq,
-//         system: &System,
-//     ) -> Option<&VersionSpec> {
-//         self.versions
-//             .iter()
-//             .filter(|v| version.matches(&v.name) && v.supports(system).is_some())
-//             .max_by(|a, b| a.name.cmp(&b.name))
-//     }
-// }
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct VersionSpec {
@@ -291,18 +224,6 @@ mod tests {
     //     println!("{:?}", spec);
     // }
 
-    // #[tokio::test]
-    // async fn search() {
-    //     let client = RegistryClient::default();
-    //     let spec = client
-    //         .search(SearchParams {
-    //             names: &["tool-scons"],
-    //         })
-    //         .await
-    //         .unwrap();
-    //     assert!(!spec.items.is_empty());
-    // }
-
     #[test]
     fn deserialize_system() {
         fn assert(input: &str, expected: System) {
@@ -316,22 +237,6 @@ mod tests {
         assert("darwin_arm64", System::DarwinArm64);
         assert("linux_x86_64", System::LinuxX86_64);
         assert("linux_aarch64", System::LinuxAarch64);
-    }
-
-    #[test]
-    fn deserialize_search_result() {
-        let json = include_str!("./test/search.json");
-        let de = &mut serde_json::Deserializer::from_str(json);
-        let spec = serde_path_to_error::deserialize::<_, SearchResults>(de);
-        // TODO: snapshot test?
-        match spec {
-            Ok(spec) => {
-                println!("{:?}", spec);
-            }
-            Err(err) => {
-                panic!("failed to deserialize: {err}");
-            }
-        }
     }
 
     #[test]
@@ -365,53 +270,6 @@ mod tests {
             }
         }
     }
-
-    // TODO
-    /* #[test]
-    fn pick_latest_compatible() {
-        let systems = SystemSpec::Systems(vec![System::LinuxX86_64]);
-        let latest = VersionSpec {
-            name: "2.0.0".parse().unwrap(),
-            files: vec![File {
-                system: systems.clone(),
-                download_url: Url::parse("https://example.com").unwrap(),
-                checksum: Checksum {
-                    sha256: "deadbeef".to_string(),
-                },
-            }],
-        };
-        let spec = PackageSpec {
-            name: "test".to_string(),
-            ty: "platform".to_string(),
-            version: latest.clone(),
-            versions: vec![
-                VersionSpec {
-                    name: "1.0.0".parse().unwrap(),
-                    files: vec![File {
-                        system: systems.clone(),
-                        download_url: Url::parse("https://example.com").unwrap(),
-                        checksum: Checksum {
-                            sha256: "deadbeef".to_string(),
-                        },
-                    }],
-                },
-                VersionSpec {
-                    name: "1.1.0".parse().unwrap(),
-                    files: vec![File {
-                        system: systems.clone(),
-                        download_url: Url::parse("https://example.com").unwrap(),
-                        checksum: Checksum {
-                            sha256: "deadbeef".to_string(),
-                        },
-                    }],
-                },
-                latest,
-            ],
-        };
-
-        let version = spec.pick_latest_compatible("~1".parse().unwrap(), &System::LinuxX86_64);
-        assert_eq!(version.map(|v| &v.name), Some(&"1.1.0".parse().unwrap()));
-    } */
 
     #[test]
     fn deserialize_lib_package_spec_invalid_semver() {

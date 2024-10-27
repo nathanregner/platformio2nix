@@ -14,7 +14,7 @@ use manifest::extract_manifests;
 use registry::RegistryClient;
 use serde::Deserialize;
 
-/// Simple program to greet a person
+/// Generate a platformio2nix lockfile to stdout
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
