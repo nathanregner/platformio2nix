@@ -61,11 +61,11 @@ makeSetupHook
           ${
             if drv.passthru.mutableInstall then
               ''
-                cp -Lr ${drv} ${dest}
-                chmod -R +w ${dest}
+                cp -Lr "${drv}" "${dest}"
+                chmod -R +w "${dest}"
               ''
             else
-              ''ln -s ${drv} ${dest}''
+              ''ln -s "${drv}" "${dest}"''
           }
         ''
       ) finalDeps;
