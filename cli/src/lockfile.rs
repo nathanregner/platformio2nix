@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 
 use crate::{
-    manifest::{ExternalSpec, Manifest, PackageType},
+    manifest::{ExternalSpec, Manifest, ManifestMetadata, PackageType},
     registry,
 };
 
@@ -71,20 +71,27 @@ pub struct Dependency {
 }
 
 impl Dependency {
-    pub fn from_url(manifest: &Manifest, package_spec: &ExternalSpec, sha256: &[u8]) -> Self {
+    pub fn from_url(
+        metadata: &ManifestMetadata,
+        package_spec: &ExternalSpec,
+        sha256: &[u8],
+    ) -> Self {
         let systems = NixSystem::ALL
             .iter()
             .map(|nix_system| (*nix_system, FetchUrl::new(package_spec.uri.clone(), sha256)))
             .collect();
         Self::new(
-            manifest,
+            metadata,
             package_spec.name.clone(),
-            manifest.version.clone(),
+            metadata.manifest.version.clone(),
             systems,
         )
     }
 
-    pub fn from_registry(manifest: &Manifest, package_spec: &registry::PackageSpec) -> Self {
+    pub fn from_registry(
+        manifest: &ManifestMetadata,
+        package_spec: &registry::PackageSpec,
+    ) -> Self {
         let version = &package_spec.version;
         let systems = NixSystem::ALL
             .iter()
@@ -102,24 +109,15 @@ impl Dependency {
     }
 
     fn new(
-        manifest: &Manifest,
+        metadata: &ManifestMetadata,
         name: String,
         version: String,
         systems: BTreeMap<NixSystem, FetchUrl>,
     ) -> Self {
-        let install_path = format!(
-            "{}/{}",
-            match manifest.ty {
-                PackageType::Platform => "platforms",
-                PackageType::Package | PackageType::Tool => "packages",
-                PackageType::Library => "libdeps",
-            },
-            name
-        );
         Self {
             name,
-            install_path,
-            manifest: serde_json::to_string(&manifest).expect("serializable manifest"),
+            install_path: metadata.install_path.to_string_lossy().into(), // TODO: handle error
+            manifest: serde_json::to_string(&metadata.manifest).expect("serializable manifest"),
             version,
             systems,
         }

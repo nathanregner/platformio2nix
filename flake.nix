@@ -12,6 +12,7 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       flake-parts,
       treefmt-nix,
@@ -78,6 +79,7 @@
 
       flake = {
         overlays.default = final: prev: {
+          inherit (self.packages.${final.system}) platformio2nix;
           makePlatformIOSetupHook = final.callPackage ./setup-hook.nix { };
         };
       };

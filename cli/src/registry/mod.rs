@@ -10,7 +10,7 @@ use sha2::{Digest, Sha256};
 
 use crate::{
     lockfile::Dependency,
-    manifest::{ExternalSpec, Manifest, PackageType, PlatformIOSpec},
+    manifest::{ExternalSpec, ManifestMetadata, PackageType, PlatformIOSpec},
 };
 
 pub struct RegistryClient {
@@ -40,23 +40,28 @@ impl Default for RegistryClient {
 }
 
 impl RegistryClient {
-    pub async fn resolve(&self, manifest: &Manifest) -> eyre::Result<Dependency> {
-        match &manifest.spec {
+    pub async fn resolve(&self, metadata: &ManifestMetadata) -> eyre::Result<Dependency> {
+        match &metadata.manifest.spec {
             crate::manifest::PackageSpec::PlatformIO(PlatformIOSpec { owner, name, .. }) => {
                 let package_spec = self
-                    .get_package_spec(owner, manifest.ty, name, Some(manifest.version.to_string()))
+                    .get_package_spec(
+                        owner,
+                        metadata.manifest.ty,
+                        name,
+                        Some(metadata.manifest.version.to_string()),
+                    )
                     .await?;
-                Ok(Dependency::from_registry(&manifest, &package_spec))
+                Ok(Dependency::from_registry(&metadata, &package_spec))
             }
             crate::manifest::PackageSpec::External(package_spec) => {
-                self.get_external(&manifest, package_spec).await
+                self.get_external(&metadata, package_spec).await
             }
         }
     }
 
     pub async fn get_external(
         &self,
-        manifest: &Manifest,
+        metadata: &ManifestMetadata,
         package_spec: &ExternalSpec,
     ) -> eyre::Result<Dependency> {
         let response = self.client.get(package_spec.uri.clone()).send().await?;
@@ -65,7 +70,7 @@ impl RegistryClient {
         let mut hash = Sha256::new();
         hash.update(bytes);
         let hash = hash.finalize();
-        Ok(Dependency::from_url(manifest, package_spec, &hash))
+        Ok(Dependency::from_url(metadata, package_spec, &hash))
     }
 
     pub async fn get_package_spec(

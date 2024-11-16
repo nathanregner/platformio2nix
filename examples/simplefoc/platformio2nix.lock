@@ -1,0 +1,125 @@
+{
+  "version": "V1",
+  "dependencies": {
+    "Simple FOC": {
+      "name": "Simple FOC",
+      "install_path": "libdeps/Simple FOC",
+      "version": "2.3.4",
+      "manifest": "{\"type\":\"library\",\"version\":\"2.3.4\",\"spec\":{\"owner\":\"askuric\",\"name\":\"Simple FOC\",\"id\":7229,\"requirements\":null,\"uri\":null},\"name\":\"Simple FOC\"}",
+      "systems": {
+        "aarch64-linux": {
+          "url": "https://dl.registry.platformio.org/download/askuric/library/Simple%20FOC/2.3.4/SimpleFOC-2.3.4.tar.gz",
+          "hash": "sha256-i72v2JP22fTqqaYYfrvJrhKZ5NJUAnod5kPwOzai5P4="
+        },
+        "aarch64-darwin": {
+          "url": "https://dl.registry.platformio.org/download/askuric/library/Simple%20FOC/2.3.4/SimpleFOC-2.3.4.tar.gz",
+          "hash": "sha256-i72v2JP22fTqqaYYfrvJrhKZ5NJUAnod5kPwOzai5P4="
+        },
+        "x86_64-linux": {
+          "url": "https://dl.registry.platformio.org/download/askuric/library/Simple%20FOC/2.3.4/SimpleFOC-2.3.4.tar.gz",
+          "hash": "sha256-i72v2JP22fTqqaYYfrvJrhKZ5NJUAnod5kPwOzai5P4="
+        },
+        "x86_64-darwin": {
+          "url": "https://dl.registry.platformio.org/download/askuric/library/Simple%20FOC/2.3.4/SimpleFOC-2.3.4.tar.gz",
+          "hash": "sha256-i72v2JP22fTqqaYYfrvJrhKZ5NJUAnod5kPwOzai5P4="
+        }
+      }
+    },
+    "atmelavr": {
+      "name": "atmelavr",
+      "install_path": "platforms/atmelavr",
+      "version": "5.1.0",
+      "manifest": "{\"type\":\"platform\",\"version\":\"5.1.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"atmelavr\",\"id\":8006,\"requirements\":null,\"uri\":null},\"name\":\"atmelavr\"}",
+      "systems": {
+        "aarch64-linux": {
+          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.1.0/atmelavr-5.1.0.tar.gz",
+          "hash": "sha256-0XGSJi0KwN04/98qUTlzkmYtm1K95fc4JWJoYIhLQhk="
+        },
+        "aarch64-darwin": {
+          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.1.0/atmelavr-5.1.0.tar.gz",
+          "hash": "sha256-0XGSJi0KwN04/98qUTlzkmYtm1K95fc4JWJoYIhLQhk="
+        },
+        "x86_64-linux": {
+          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.1.0/atmelavr-5.1.0.tar.gz",
+          "hash": "sha256-0XGSJi0KwN04/98qUTlzkmYtm1K95fc4JWJoYIhLQhk="
+        },
+        "x86_64-darwin": {
+          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.1.0/atmelavr-5.1.0.tar.gz",
+          "hash": "sha256-0XGSJi0KwN04/98qUTlzkmYtm1K95fc4JWJoYIhLQhk="
+        }
+      }
+    },
+    "framework-arduino-avr": {
+      "name": "framework-arduino-avr",
+      "install_path": "packages/framework-arduino-avr",
+      "version": "5.2.0",
+      "manifest": "{\"type\":\"tool\",\"version\":\"5.2.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"framework-arduino-avr\",\"id\":8039,\"requirements\":null,\"uri\":null},\"name\":\"framework-arduino-avr\"}",
+      "systems": {
+        "aarch64-linux": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduino-avr/5.2.0/framework-arduino-avr-5.2.0.tar.gz",
+          "hash": "sha256-caP+gsutiVwQ2oCsd/guUMdxsR26Iabi+dIbxTr0ARY="
+        },
+        "aarch64-darwin": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduino-avr/5.2.0/framework-arduino-avr-5.2.0.tar.gz",
+          "hash": "sha256-caP+gsutiVwQ2oCsd/guUMdxsR26Iabi+dIbxTr0ARY="
+        },
+        "x86_64-linux": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduino-avr/5.2.0/framework-arduino-avr-5.2.0.tar.gz",
+          "hash": "sha256-caP+gsutiVwQ2oCsd/guUMdxsR26Iabi+dIbxTr0ARY="
+        },
+        "x86_64-darwin": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduino-avr/5.2.0/framework-arduino-avr-5.2.0.tar.gz",
+          "hash": "sha256-caP+gsutiVwQ2oCsd/guUMdxsR26Iabi+dIbxTr0ARY="
+        }
+      }
+    },
+    "tool-scons": {
+      "name": "tool-scons",
+      "install_path": "packages/tool-scons",
+      "version": "4.40700.0",
+      "manifest": "{\"type\":\"tool\",\"version\":\"4.40700.0\",\"spec\":{\"owner\":\"platformio\",\"name\":\"tool-scons\",\"id\":8192,\"requirements\":null,\"uri\":null},\"name\":\"tool-scons\"}",
+      "systems": {
+        "aarch64-linux": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
+          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
+        },
+        "aarch64-darwin": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
+          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
+        },
+        "x86_64-linux": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
+          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
+        },
+        "x86_64-darwin": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
+          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
+        }
+      }
+    },
+    "toolchain-atmelavr": {
+      "name": "toolchain-atmelavr",
+      "install_path": "packages/toolchain-atmelavr",
+      "version": "1.70300.191015",
+      "manifest": "{\"type\":\"tool\",\"version\":\"1.70300.191015\",\"spec\":{\"owner\":\"platformio\",\"name\":\"toolchain-atmelavr\",\"id\":8203,\"requirements\":null,\"uri\":null},\"name\":\"toolchain-atmelavr\"}",
+      "systems": {
+        "aarch64-linux": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-linux_aarch64-1.70300.191015.tar.gz",
+          "hash": "sha256-N/UfxyaclS175uiH9lyyYw9yeO5c7LwZ4CAD2JXp0zQ="
+        },
+        "aarch64-darwin": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-darwin_x86_64-1.70300.191015.tar.gz",
+          "hash": "sha256-ZbvIZjFjRU9nj5WSqnRdLvfjvphlS1kIMAmvVmSKBvI="
+        },
+        "x86_64-linux": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-linux_x86_64-1.70300.191015.tar.gz",
+          "hash": "sha256-Zk8LewihXo1jYrh+L9taTc/VlZ68WxnZOOff9vEvBSQ="
+        },
+        "x86_64-darwin": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-darwin_x86_64-1.70300.191015.tar.gz",
+          "hash": "sha256-ZbvIZjFjRU9nj5WSqnRdLvfjvphlS1kIMAmvVmSKBvI="
+        }
+      }
+    }
+  }
+}

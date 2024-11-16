@@ -21,11 +21,10 @@ stdenv.mkDerivation {
   name = "marlin";
   inherit version src;
 
-  nativeBuildInputs = [ setupHook ];
-
-  buildInputs = [
+  nativeBuildInputs = [
     gnumake
     platformio
+    setupHook
     which
   ];
 

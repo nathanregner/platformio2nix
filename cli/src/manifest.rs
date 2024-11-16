@@ -1,4 +1,7 @@
-use std::{collections::BTreeMap, path::Path};
+use std::{
+    collections::BTreeMap,
+    path::{Path, PathBuf},
+};
 
 use color_eyre::eyre::{self, Context};
 use serde::{Deserialize, Serialize};
@@ -37,6 +40,12 @@ pub struct Manifest {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct ManifestMetadata {
+    pub manifest: Manifest,
+    pub install_path: PathBuf,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
 pub enum PackageSpec {
     PlatformIO(PlatformIOSpec),
@@ -59,13 +68,17 @@ pub struct ExternalSpec {
     _extra: BTreeMap<String, Value>,
 }
 
-pub fn extract_manifests(root: &Path) -> Result<Vec<Manifest>, eyre::Error> {
+pub fn extract_manifests(root: &Path) -> eyre::Result<Vec<ManifestMetadata>> {
     let mut manifests = vec![];
-    extract_manifests_rec(&mut manifests, &root)?;
+    extract_manifests_rec(&mut manifests, &root, &root)?;
     Ok(manifests)
 }
 
-fn extract_manifests_rec(manifests: &mut Vec<Manifest>, dir: &Path) -> Result<(), eyre::Error> {
+fn extract_manifests_rec(
+    manifests: &mut Vec<ManifestMetadata>,
+    root: &Path,
+    dir: &Path,
+) -> eyre::Result<()> {
     for entry in std::fs::read_dir(dir)? {
         let entry = entry?;
         if !entry.file_type()?.is_dir() {
@@ -74,7 +87,7 @@ fn extract_manifests_rec(manifests: &mut Vec<Manifest>, dir: &Path) -> Result<()
 
         let piopm = entry.path().join(".piopm");
         if !piopm.exists() {
-            extract_manifests_rec(manifests, &entry.path())?;
+            extract_manifests_rec(manifests, &root, &entry.path())?;
             continue;
         }
 
@@ -83,7 +96,13 @@ fn extract_manifests_rec(manifests: &mut Vec<Manifest>, dir: &Path) -> Result<()
         let manifest = serde_path_to_error::deserialize::<_, Manifest>(de).wrap_err_with(|| {
             format!("failed to parse manifest file: {}", piopm.to_string_lossy())
         })?;
-        manifests.push(manifest);
+        let install_path = dir
+            .strip_prefix(&root)
+            .wrap_err_with(|| format!(r#"Dependency "{dir:?}" is not a child of "{root:?}""#))?;
+        manifests.push(ManifestMetadata {
+            manifest,
+            install_path: install_path.to_path_buf(),
+        });
         continue;
     }
 
