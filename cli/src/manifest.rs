@@ -8,6 +8,30 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use url::Url;
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Artifact {
+    pub ty: ArtifactType,
+    pub install_path: PathBuf,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub enum ArtifactType {
+    PackageManifest(PackageManifest),
+    IntegrityFile(String),
+}
+
+/// .piopm package manifest file
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PackageManifest {
+    #[serde(rename = "type")]
+    pub ty: PackageType,
+    pub version: String,
+    pub spec: PackageSpec,
+
+    #[serde(flatten)]
+    _extra: BTreeMap<String, Value>,
+}
+
 #[derive(Serialize, Deserialize, Hash, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Debug)]
 #[serde(rename_all = "lowercase")]
 pub enum PackageType {
@@ -25,24 +49,6 @@ impl PackageType {
             PackageType::Tool => "tool",
         }
     }
-}
-
-/// .piopm package manifest file
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Manifest {
-    #[serde(rename = "type")]
-    pub ty: PackageType,
-    pub version: String,
-    pub spec: PackageSpec,
-
-    #[serde(flatten)]
-    _extra: BTreeMap<String, Value>,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct ManifestMetadata {
-    pub manifest: Manifest,
-    pub install_path: PathBuf,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -68,41 +74,61 @@ pub struct ExternalSpec {
     _extra: BTreeMap<String, Value>,
 }
 
-pub fn extract_manifests(root: &Path) -> eyre::Result<Vec<ManifestMetadata>> {
-    let mut manifests = vec![];
-    extract_manifests_rec(&mut manifests, &root, &root)?;
-    Ok(manifests)
+pub fn extract_artifacts(root: &Path) -> eyre::Result<Vec<Artifact>> {
+    let mut artifacts = vec![];
+    extract_artifacts_rec(&mut artifacts, &root, &root)?;
+    Ok(artifacts)
 }
 
-fn extract_manifests_rec(
-    manifests: &mut Vec<ManifestMetadata>,
+fn extract_artifacts_rec(
+    artifacts: &mut Vec<Artifact>,
     root: &Path,
     dir: &Path,
 ) -> eyre::Result<()> {
-    for entry in std::fs::read_dir(dir)? {
+    for entry in std::fs::read_dir(dir).with_context(|| format!("reading {dir:?}"))? {
         let entry = entry?;
         if !entry.file_type()?.is_dir() {
             continue;
         }
+        let path = entry.path();
 
-        let piopm = entry.path().join(".piopm");
-        if !piopm.exists() {
-            extract_manifests_rec(manifests, &root, &entry.path())?;
-            continue;
+        let install_path = || {
+            eyre::Ok(
+                path.strip_prefix(root)
+                    .wrap_err_with(|| {
+                        format!("File {dir:?} is not a child of {root:?}: followed a symlink?")
+                    })?
+                    .to_path_buf(),
+            )
+        };
+
+        let piopm = path.join(".piopm");
+        if piopm.exists() {
+            let json = std::fs::read_to_string(&piopm)?;
+            let de = &mut serde_json::Deserializer::from_str(&json);
+            let manifest = serde_path_to_error::deserialize::<_, PackageManifest>(de)
+                .wrap_err_with(|| {
+                    format!("failed to parse manifest file: {}", piopm.to_string_lossy())
+                })?;
+            artifacts.push(Artifact {
+                ty: ArtifactType::PackageManifest(manifest),
+                install_path: install_path()?,
+            });
+            continue; // leaf
         }
 
-        let json = std::fs::read_to_string(&piopm)?;
-        let de = &mut serde_json::Deserializer::from_str(&json);
-        let manifest = serde_path_to_error::deserialize::<_, Manifest>(de).wrap_err_with(|| {
-            format!("failed to parse manifest file: {}", piopm.to_string_lossy())
-        })?;
-        let install_path = dir
-            .strip_prefix(&root)
-            .wrap_err_with(|| format!(r#"Dependency "{dir:?}" is not a child of "{root:?}""#))?;
-        manifests.push(ManifestMetadata {
-            manifest,
-            install_path: install_path.to_path_buf(),
-        });
+        let integrity_dat = path.join("integrity.dat");
+        if integrity_dat.exists() {
+            artifacts.push(Artifact {
+                ty: ArtifactType::IntegrityFile(
+                    std::fs::read_to_string(&integrity_dat)
+                        .with_context(|| format!("{:?}", &integrity_dat))?,
+                ),
+                install_path: install_path()?,
+            });
+        }
+
+        extract_artifacts_rec(artifacts, &root, &path)?;
         continue;
     }
 

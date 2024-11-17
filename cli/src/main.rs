@@ -10,7 +10,7 @@ use std::{
 use clap::Parser;
 use color_eyre::eyre::{self};
 use lockfile::Lockfile;
-use manifest::extract_manifests;
+use manifest::extract_artifacts;
 use registry::RegistryClient;
 use serde::Deserialize;
 
@@ -76,21 +76,33 @@ pub enum Repository {
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
+    pretty_env_logger::formatted_builder()
+        .filter_level(log::LevelFilter::Warn)
+        .parse_default_env()
+        .init();
+
     let args = Args::parse();
     let client = RegistryClient::default();
 
-    let global = extract_manifests(&args.core_dir()?)?;
+    let global = extract_artifacts(&args.core_dir()?)?;
     let workspace = if let Some(workspace_dir) = args.workspace_dir()? {
-        extract_manifests(&workspace_dir)?
+        extract_artifacts(&workspace_dir)?
     } else {
         vec![]
     };
 
     let mut lockfile = Lockfile::default();
 
-    for manifest in global.into_iter().chain(workspace.into_iter()) {
-        let dependency = client.resolve(&manifest).await?;
-        lockfile.insert(dependency);
+    for artifact in global.into_iter().chain(workspace.into_iter()) {
+        match artifact.ty {
+            manifest::ArtifactType::PackageManifest(manifest) => {
+                let dependency = client.resolve(&manifest, artifact.install_path).await?;
+                lockfile.add_dependency(dependency);
+            }
+            manifest::ArtifactType::IntegrityFile(contents) => {
+                lockfile.add_integrity_file(artifact.install_path, contents);
+            }
+        }
     }
 
     println!("{}", serde_json::to_string_pretty(&lockfile)?);

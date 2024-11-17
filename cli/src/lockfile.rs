@@ -1,34 +1,51 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, fmt::Display, path::PathBuf};
 
 use base64::prelude::*;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
 use crate::{
-    manifest::{ExternalSpec, Manifest, ManifestMetadata, PackageType},
+    manifest::{ExternalSpec, PackageManifest},
     registry,
 };
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "version")]
 pub enum Lockfile {
-    V1 {
-        dependencies: BTreeMap<String, Dependency>,
+    // TODO: Check this in `setupHook`
+    #[serde(rename = "2")]
+    V2 {
+        dependencies: BTreeMap<PathBuf, Dependency>,
+        #[serde(rename = "integrityFiles")]
+        integrity_files: BTreeMap<PathBuf, String>,
     },
 }
 
 impl Default for Lockfile {
     fn default() -> Self {
-        Self::V1 {
+        Self::V2 {
             dependencies: BTreeMap::default(),
+            integrity_files: BTreeMap::default(),
         }
     }
 }
 
 impl Lockfile {
-    pub fn insert(&mut self, dependency: Dependency) {
-        let Self::V1 { dependencies } = self;
-        dependencies.insert(dependency.name.clone(), dependency);
+    pub fn add_dependency(&mut self, dependency: Dependency) {
+        let Self::V2 { dependencies, .. } = self;
+        if let Some(old) = dependencies.insert(dependency.install_path.clone(), dependency) {
+            let new = &dependencies[&old.install_path];
+            if old.manifest != new.manifest {
+                log::warn!(r#"Found duplicate dependency "{old}", using "{new}"#)
+            }
+        }
+    }
+
+    pub fn add_integrity_file(&mut self, install_path: PathBuf, contents: String) {
+        let Self::V2 {
+            integrity_files, ..
+        } = self;
+        integrity_files.insert(install_path, contents);
     }
 }
 
@@ -64,7 +81,8 @@ impl NixSystem {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Dependency {
     pub name: String,
-    pub install_path: String,
+    #[serde(rename = "installPath")]
+    pub install_path: PathBuf,
     pub version: String,
     pub manifest: String,
     pub systems: BTreeMap<NixSystem, FetchUrl>,
@@ -72,7 +90,8 @@ pub struct Dependency {
 
 impl Dependency {
     pub fn from_url(
-        metadata: &ManifestMetadata,
+        manifest: &PackageManifest,
+        install_path: PathBuf,
         package_spec: &ExternalSpec,
         sha256: &[u8],
     ) -> Self {
@@ -81,15 +100,17 @@ impl Dependency {
             .map(|nix_system| (*nix_system, FetchUrl::new(package_spec.uri.clone(), sha256)))
             .collect();
         Self::new(
-            metadata,
+            manifest,
+            install_path,
             package_spec.name.clone(),
-            metadata.manifest.version.clone(),
+            manifest.version.clone(),
             systems,
         )
     }
 
     pub fn from_registry(
-        manifest: &ManifestMetadata,
+        manifest: &PackageManifest,
+        install_path: PathBuf,
         package_spec: &registry::PackageSpec,
     ) -> Self {
         let version = &package_spec.version;
@@ -102,6 +123,7 @@ impl Dependency {
             .collect();
         Self::new(
             manifest,
+            install_path,
             package_spec.name.clone(),
             version.name.clone(),
             systems,
@@ -109,18 +131,25 @@ impl Dependency {
     }
 
     fn new(
-        metadata: &ManifestMetadata,
+        manifest: &PackageManifest,
+        install_path: PathBuf,
         name: String,
         version: String,
         systems: BTreeMap<NixSystem, FetchUrl>,
     ) -> Self {
         Self {
             name,
-            install_path: metadata.install_path.to_string_lossy().into(), // TODO: handle error
-            manifest: serde_json::to_string(&metadata.manifest).expect("serializable manifest"),
+            install_path,
+            manifest: serde_json::to_string(manifest).expect("serializable manifest"),
             version,
             systems,
         }
+    }
+}
+
+impl Display for Dependency {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}@{}", self.name, self.version)
     }
 }
 

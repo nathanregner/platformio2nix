@@ -16,8 +16,10 @@ stdenv.mkDerivation {
   ];
 
   buildPhase = ''
-    pio run -t build
+    pio run --verbose
   '';
 
-  passthru = setupHook.passthru;
+  passthru = {
+    inherit setupHook;
+  };
 }

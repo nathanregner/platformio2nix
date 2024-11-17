@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use color_eyre::eyre::{self, Context};
 use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
 use reqwest::{Client, Url};
@@ -10,7 +12,7 @@ use sha2::{Digest, Sha256};
 
 use crate::{
     lockfile::Dependency,
-    manifest::{ExternalSpec, ManifestMetadata, PackageType, PlatformIOSpec},
+    manifest::{ExternalSpec, PackageManifest, PackageType, PlatformIOSpec},
 };
 
 pub struct RegistryClient {
@@ -40,28 +42,33 @@ impl Default for RegistryClient {
 }
 
 impl RegistryClient {
-    pub async fn resolve(&self, metadata: &ManifestMetadata) -> eyre::Result<Dependency> {
-        match &metadata.manifest.spec {
+    pub async fn resolve(
+        &self,
+        manifest: &PackageManifest,
+        install_path: PathBuf,
+    ) -> eyre::Result<Dependency> {
+        match &manifest.spec {
             crate::manifest::PackageSpec::PlatformIO(PlatformIOSpec { owner, name, .. }) => {
                 let package_spec = self
-                    .get_package_spec(
-                        owner,
-                        metadata.manifest.ty,
-                        name,
-                        Some(metadata.manifest.version.to_string()),
-                    )
+                    .get_package_spec(owner, manifest.ty, name, Some(manifest.version.to_string()))
                     .await?;
-                Ok(Dependency::from_registry(&metadata, &package_spec))
+                Ok(Dependency::from_registry(
+                    &manifest,
+                    install_path,
+                    &package_spec,
+                ))
             }
             crate::manifest::PackageSpec::External(package_spec) => {
-                self.get_external(&metadata, package_spec).await
+                self.get_external(&manifest, install_path, package_spec)
+                    .await
             }
         }
     }
 
     pub async fn get_external(
         &self,
-        metadata: &ManifestMetadata,
+        manifest: &PackageManifest,
+        install_path: PathBuf,
         package_spec: &ExternalSpec,
     ) -> eyre::Result<Dependency> {
         let response = self.client.get(package_spec.uri.clone()).send().await?;
@@ -70,7 +77,12 @@ impl RegistryClient {
         let mut hash = Sha256::new();
         hash.update(bytes);
         let hash = hash.finalize();
-        Ok(Dependency::from_url(metadata, package_spec, &hash))
+        Ok(Dependency::from_url(
+            manifest,
+            install_path,
+            package_spec,
+            &hash,
+        ))
     }
 
     pub async fn get_package_spec(
@@ -91,7 +103,7 @@ impl RegistryClient {
         if let Some(version) = version {
             url.query_pairs_mut().append_pair("version", &version);
         }
-        eprintln!("fetching package spec: {}", url);
+        log::info!("Fetching package spec: {}", url);
         let response = self.client.get(url).send().await?;
         extract_json(response).await
     }
