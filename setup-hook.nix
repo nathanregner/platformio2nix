@@ -1,10 +1,12 @@
 {
-  lib,
-  makeSetupHook,
-  stdenv,
-  linkFarm,
   fetchurl,
+  lib,
+  linkFarm,
+  makeSetupHook,
+  runCommand,
+  stdenv,
   writeShellScript,
+  writeTextFile,
 }:
 
 {
@@ -27,9 +29,11 @@ let
 
       env.MANIFEST = dep.manifest;
       buildPhase = ''
-        mkdir -p $out
-        mv * $out
-        echo $MANIFEST > $out/.piopm
+        runHook preBuild
+        mkdir -p "$out"
+        mv * "$out"
+        echo "$MANIFEST" > "$out/.piopm"
+        runHook postBuild
       '';
 
       passthru = {
@@ -72,8 +76,9 @@ makeSetupHook
     in
     writeShellScript "platformio-setup-hook.sh" ''
       _platformioSetupHook() {
+        export PLATFORMIO_CORE_DIR=./.pio
+        export PLATFORMIO_WORKSPACE_DIR=./.pio
         # top-level directory must be writable by PlatformIO
-        export PLATFORMIO_CORE_DIR=./core-dir
         mkdir -p $PLATFORMIO_CORE_DIR
         ${lib.concatStrings linkCommands}
       }

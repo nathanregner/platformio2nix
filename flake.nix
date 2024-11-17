@@ -12,6 +12,7 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       flake-parts,
       treefmt-nix,
@@ -39,7 +40,7 @@
           let
             platformio2nix = pkgs.rustPlatform.buildRustPackage {
               pname = "platformio2nix";
-              version = "0.1.1";
+              version = "0.2.0";
               src = ./cli;
               cargoLock.lockFile = ./cli/Cargo.lock;
 
@@ -59,18 +60,23 @@
 
             devShells.default = pkgs.mkShell {
               inherit (platformio2nix) nativeBuildInputs buildInputs;
-              packages = (
-                with pkgs;
-                [
+              packages =
+                [ config.treefmt.build.wrapper ]
+                ++ (with pkgs; [
                   cargo
                   clippy
-                  config.treefmt.build.wrapper
                   rust-analyzer
                   rustfmt
-                ]
-              );
+                  platformio
+
+                  # for convenience when updating examples
+                  (writeShellScriptBin "platformio2nix" ''
+                    cargo run --manifest-path "$FLAKE_ROOT/cli/Cargo.toml" -- "$@"
+                  '')
+                ]);
 
               LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.openssl ];
+              PLATFORMIO_CORE_DIR = ".pio";
               RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
             };
           }
@@ -78,6 +84,7 @@
 
       flake = {
         overlays.default = final: prev: {
+          inherit (self.packages.${final.system}) platformio2nix;
           makePlatformIOSetupHook = final.callPackage ./setup-hook.nix { };
         };
       };

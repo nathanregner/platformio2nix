@@ -13,12 +13,23 @@ let
     lockfile = ./platformio2nix.lock;
     overrides = (
       final: prev: {
-        SlowSoftWire = prev.SlowSoftWire.overrideAttrs {
+        SlowSoftWire = prev.SlowSoftWire.overrideAttrs (drv: {
           nativeBuildInputs = [ libarchive ];
+
           unpackPhase = ''
             bsdtar xf $src --strip-components=1
           '';
-        };
+
+          # TODO: platformio2nix should really generate this file
+          LIBRARY = builtins.toJSON {
+            name = drv.pname;
+            inherit (drv) version;
+          };
+
+          postBuild = ''
+            echo "$LIBRARY" >> $out/library.json
+          '';
+        });
       }
     );
   };
