@@ -21,11 +21,10 @@ stdenv.mkDerivation {
   name = "marlin";
   inherit version src;
 
-  nativeBuildInputs = [ setupHook ];
-
-  buildInputs = [
+  nativeBuildInputs = [
     gnumake
     platformio
+    setupHook
     which
   ];
 
@@ -43,5 +42,7 @@ stdenv.mkDerivation {
     cp -r .pio/build/* $out
   '';
 
-  passthru = setupHook.passthru;
+  passthru = {
+    inherit setupHook;
+  };
 }

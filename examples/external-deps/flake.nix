@@ -18,7 +18,7 @@
         "x86_64-linux"
       ];
     in
-    {
+    rec {
       packages = forAllSystems (
         system:
         let
@@ -31,5 +31,7 @@
           default = pkgs.callPackage ./package.nix { };
         }
       );
+
+      checks = packages;
     };
 }

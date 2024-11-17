@@ -3,7 +3,7 @@
   "dependencies": {
     "SlowSoftI2CMaster": {
       "name": "SlowSoftI2CMaster",
-      "install_path": "libdeps/SlowSoftI2CMaster",
+      "install_path": "libdeps/uno/SlowSoftI2CMaster",
       "version": "1.0.0",
       "manifest": "{\"type\":\"library\",\"version\":\"1.0.0\",\"spec\":{\"owner\":\"felias-fogg\",\"name\":\"SlowSoftI2CMaster\",\"id\":7005,\"requirements\":null,\"uri\":null},\"name\":\"SlowSoftI2CMaster\"}",
       "systems": {
@@ -27,7 +27,7 @@
     },
     "SlowSoftWire": {
       "name": "SlowSoftWire",
-      "install_path": "libdeps/SlowSoftWire",
+      "install_path": "libdeps/uno/SlowSoftWire",
       "version": "0.0.0+20241026221146",
       "manifest": "{\"type\":\"library\",\"version\":\"0.0.0+20241026221146\",\"spec\":{\"name\":\"SlowSoftWire\",\"uri\":\"https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip\",\"id\":null,\"owner\":null,\"requirements\":null},\"name\":\"SlowSoftWire\"}",
       "systems": {
