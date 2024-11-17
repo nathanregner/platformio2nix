@@ -16,14 +16,14 @@ workspace dependencies for deterministic builds within Nix.
 # ... in your platformio project dir:
 nix shell nixpgks#platformio
 
-# recommended: install all dependencies locally; otherwise `platformio2nix` may pull in unneeded dependencies from the global core_dir.
+# recommended: install all dependencies inw workspace_dir; otherwise `platformio2nix` may pull in unneeded dependencies from the global core_dir.
 export PLATFORMIO_CORE_DIR=.pio
 
 # run the build to download dependencies
 make ...
 
 # generate a lockfile
-platformio2nix --core-dir .pio >platformio2nix.lock
+platformio2nix >platformio2nix.lock
 ```
 
 ## 2. Build your project

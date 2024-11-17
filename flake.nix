@@ -68,6 +68,7 @@
                   config.treefmt.build.wrapper
                   rust-analyzer
                   rustfmt
+                  platformio
                   (pkgs.writeShellScriptBin "platformio2nix" ''
                     cargo run --manifest-path "$FLAKE_ROOT/cli/Cargo.toml" -- "$@"
                   '')

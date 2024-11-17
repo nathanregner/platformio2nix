@@ -2,32 +2,38 @@ mod lockfile;
 mod manifest;
 mod registry;
 
-use std::{
-    env::{self},
-    path::PathBuf,
-};
-
 use clap::Parser;
 use color_eyre::eyre::{self};
 use lockfile::Lockfile;
 use manifest::extract_artifacts;
 use registry::RegistryClient;
 use serde::Deserialize;
+use std::{
+    env::{self},
+    path::PathBuf,
+};
 
 /// Generate a platformio2nix lockfile to stdout
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
-    /// PlatformIO [core_dir](https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/core_dir.html)
-    /// containing toolchains and global libraries.
+    /// Directory containing toolchains and global libraries.
+    ///
+    /// Default: $PLATFORMIO_CORE_DIR, ~/.platformio
+    ///
+    /// https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/core_dir.html
     #[arg(short, long)]
     core_dir: Option<PathBuf>,
+    /// Directory containing compiled objects, static libraries, firmware, and external library dependencies.
+    ///
+    /// Default: $PLATFORMIO_WORKSPACE_DIR, ./.pio
+    ///
+    /// https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/workspace_dir.html
     #[arg(short, long)]
     workspace_dir: Option<PathBuf>,
 }
 
 impl Args {
-    // https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/core_dir.html
     fn core_dir(&self) -> eyre::Result<PathBuf> {
         if let Some(core_dir) = &self.core_dir {
             return Ok(core_dir.to_owned());
@@ -44,7 +50,6 @@ impl Args {
         eyre::bail!("Failed to detect core_dir, consider passing --core-dir")
     }
 
-    // https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/workspace_dir.html
     fn workspace_dir(&self) -> eyre::Result<Option<PathBuf>> {
         if let Some(workspace_dir) = self.workspace_dir.as_deref() {
             return Ok(Some(workspace_dir.to_owned()));
