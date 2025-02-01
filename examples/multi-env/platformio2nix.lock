@@ -1,0 +1,351 @@
+{
+  "version": "2",
+  "dependencies": {
+    "libdeps/pico/RadioLib": {
+      "name": "RadioLib",
+      "manifest": {
+        "type": "library",
+        "version": "7.1.2",
+        "spec": {
+          "owner": "jgromes",
+          "name": "RadioLib",
+          "id": 5795,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "RadioLib"
+      },
+      "src": {
+        "universal": {
+          "url": "https://dl.registry.platformio.org/download/jgromes/library/RadioLib/7.1.2/RadioLib-7.1.2.tar.gz",
+          "hash": "sha256-wWaoYmkosUs06KUldjKEi9+NplEP8W6b3f0P8HDEpBk="
+        }
+      }
+    },
+    "libdeps/teensy/RadioLib": {
+      "name": "RadioLib",
+      "manifest": {
+        "type": "library",
+        "version": "7.1.2",
+        "spec": {
+          "owner": "jgromes",
+          "name": "RadioLib",
+          "id": 5795,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "RadioLib"
+      },
+      "src": {
+        "universal": {
+          "url": "https://dl.registry.platformio.org/download/jgromes/library/RadioLib/7.1.2/RadioLib-7.1.2.tar.gz",
+          "hash": "sha256-wWaoYmkosUs06KUldjKEi9+NplEP8W6b3f0P8HDEpBk="
+        }
+      }
+    },
+    "libdeps/uno/RadioLib": {
+      "name": "RadioLib",
+      "manifest": {
+        "type": "library",
+        "version": "7.1.2",
+        "spec": {
+          "owner": "jgromes",
+          "name": "RadioLib",
+          "id": 5795,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "RadioLib"
+      },
+      "src": {
+        "universal": {
+          "url": "https://dl.registry.platformio.org/download/jgromes/library/RadioLib/7.1.2/RadioLib-7.1.2.tar.gz",
+          "hash": "sha256-wWaoYmkosUs06KUldjKEi9+NplEP8W6b3f0P8HDEpBk="
+        }
+      }
+    },
+    "packages/framework-arduino-avr": {
+      "name": "framework-arduino-avr",
+      "manifest": {
+        "type": "tool",
+        "version": "5.2.0",
+        "spec": {
+          "owner": "platformio",
+          "name": "framework-arduino-avr",
+          "id": 8039,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "framework-arduino-avr"
+      },
+      "src": {
+        "universal": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduino-avr/5.2.0/framework-arduino-avr-5.2.0.tar.gz",
+          "hash": "sha256-caP+gsutiVwQ2oCsd/guUMdxsR26Iabi+dIbxTr0ARY="
+        }
+      }
+    },
+    "packages/framework-arduino-mbed": {
+      "name": "framework-arduino-mbed",
+      "manifest": {
+        "type": "tool",
+        "version": "4.2.1",
+        "spec": {
+          "owner": "platformio",
+          "name": "framework-arduino-mbed",
+          "id": 11972,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "framework-arduino-mbed"
+      },
+      "src": {
+        "universal": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduino-mbed/4.2.1/framework-arduino-mbed-4.2.1.tar.gz",
+          "hash": "sha256-rPjD9y0+tGJPVM8jQCexql/yw5JE3XYorVFcfQGsPLc="
+        }
+      }
+    },
+    "packages/framework-arduinoteensy": {
+      "name": "framework-arduinoteensy",
+      "manifest": {
+        "type": "tool",
+        "version": "1.159.0",
+        "spec": {
+          "owner": "platformio",
+          "name": "framework-arduinoteensy",
+          "id": 8084,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "framework-arduinoteensy"
+      },
+      "src": {
+        "universal": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/framework-arduinoteensy/1.159.0/framework-arduinoteensy-1.159.0.tar.gz",
+          "hash": "sha256-xRH6BHRxxla8KM/l6V6ssiP4PMejsx/PZS4ltec/eDg="
+        }
+      }
+    },
+    "packages/tool-rp2040tools": {
+      "name": "tool-rp2040tools",
+      "manifest": {
+        "type": "tool",
+        "version": "1.0.2",
+        "spec": {
+          "owner": "platformio",
+          "name": "tool-rp2040tools",
+          "id": 12086,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "tool-rp2040tools"
+      },
+      "src": {
+        "systems": {
+          "aarch64-linux": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-rp2040tools/1.0.2/tool-rp2040tools-linux_aarch64-1.0.2.tar.gz",
+            "hash": "sha256-jhVtaJi51mdB0FzIL9eQQK0S60s4FajF7wUOAioO5+E="
+          },
+          "aarch64-darwin": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-rp2040tools/1.0.2/tool-rp2040tools-darwin_x86_64-1.0.2.tar.gz",
+            "hash": "sha256-iK6R8Bp4f8nYGJJIXSWO9iBQ70SvlLT4L8B/qp47SI8="
+          },
+          "x86_64-linux": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-rp2040tools/1.0.2/tool-rp2040tools-linux_x86_64-1.0.2.tar.gz",
+            "hash": "sha256-SyRtKZYzWWud2/PzwejIFeDtoApKECFghi1GmZH5gPs="
+          },
+          "x86_64-darwin": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-rp2040tools/1.0.2/tool-rp2040tools-darwin_x86_64-1.0.2.tar.gz",
+            "hash": "sha256-iK6R8Bp4f8nYGJJIXSWO9iBQ70SvlLT4L8B/qp47SI8="
+          }
+        }
+      }
+    },
+    "packages/tool-scons": {
+      "name": "tool-scons",
+      "manifest": {
+        "type": "tool",
+        "version": "4.40700.0",
+        "spec": {
+          "owner": "platformio",
+          "name": "tool-scons",
+          "id": 8192,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "tool-scons"
+      },
+      "src": {
+        "universal": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
+          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
+        }
+      }
+    },
+    "packages/toolchain-atmelavr": {
+      "name": "toolchain-atmelavr",
+      "manifest": {
+        "type": "tool",
+        "version": "1.70300.191015",
+        "spec": {
+          "owner": "platformio",
+          "name": "toolchain-atmelavr",
+          "id": 8203,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "toolchain-atmelavr"
+      },
+      "src": {
+        "systems": {
+          "aarch64-linux": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-linux_aarch64-1.70300.191015.tar.gz",
+            "hash": "sha256-N/UfxyaclS175uiH9lyyYw9yeO5c7LwZ4CAD2JXp0zQ="
+          },
+          "aarch64-darwin": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-darwin_x86_64-1.70300.191015.tar.gz",
+            "hash": "sha256-ZbvIZjFjRU9nj5WSqnRdLvfjvphlS1kIMAmvVmSKBvI="
+          },
+          "x86_64-linux": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-linux_x86_64-1.70300.191015.tar.gz",
+            "hash": "sha256-Zk8LewihXo1jYrh+L9taTc/VlZ68WxnZOOff9vEvBSQ="
+          },
+          "x86_64-darwin": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-atmelavr/1.70300.191015/toolchain-atmelavr-darwin_x86_64-1.70300.191015.tar.gz",
+            "hash": "sha256-ZbvIZjFjRU9nj5WSqnRdLvfjvphlS1kIMAmvVmSKBvI="
+          }
+        }
+      }
+    },
+    "packages/toolchain-gccarmnoneeabi": {
+      "name": "toolchain-gccarmnoneeabi",
+      "manifest": {
+        "type": "tool",
+        "version": "1.90201.191206",
+        "spec": {
+          "owner": "platformio",
+          "name": "toolchain-gccarmnoneeabi",
+          "id": 8207,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "toolchain-gccarmnoneeabi"
+      },
+      "src": {
+        "systems": {
+          "aarch64-darwin": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi/1.90201.191206/toolchain-gccarmnoneeabi-darwin_x86_64-1.90201.191206.tar.gz",
+            "hash": "sha256-MJ+3zVwbEvG6japvdVTMlclqgSRrb/SDPLsxQ2+Pat0="
+          },
+          "x86_64-linux": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi/1.90201.191206/toolchain-gccarmnoneeabi-linux_x86_64-1.90201.191206.tar.gz",
+            "hash": "sha256-FA+yY3mLncGVCzgxxE2asBGW+IMBK3hlix4AK5A10mw="
+          },
+          "x86_64-darwin": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi/1.90201.191206/toolchain-gccarmnoneeabi-darwin_x86_64-1.90201.191206.tar.gz",
+            "hash": "sha256-MJ+3zVwbEvG6japvdVTMlclqgSRrb/SDPLsxQ2+Pat0="
+          }
+        }
+      }
+    },
+    "packages/toolchain-gccarmnoneeabi-teensy": {
+      "name": "toolchain-gccarmnoneeabi-teensy",
+      "manifest": {
+        "type": "tool",
+        "version": "1.110301.0",
+        "spec": {
+          "owner": "platformio",
+          "name": "toolchain-gccarmnoneeabi-teensy",
+          "id": 15316,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "toolchain-gccarmnoneeabi-teensy"
+      },
+      "src": {
+        "systems": {
+          "aarch64-linux": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi-teensy/1.110301.0/toolchain-gccarmnoneeabi-teensy-linux_aarch64-1.110301.0.tar.gz",
+            "hash": "sha256-jGJtTPMhuFx/YCx2ppAVHqxlC7OxvZxHQkvMR3W9QSY="
+          },
+          "aarch64-darwin": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi-teensy/1.110301.0/toolchain-gccarmnoneeabi-teensy-darwin_x86_64-1.110301.0.tar.gz",
+            "hash": "sha256-j4iIDqCiOwHFuq4+PDQ7lKhM6lG86Vf0tVGDRijm8t4="
+          },
+          "x86_64-linux": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi-teensy/1.110301.0/toolchain-gccarmnoneeabi-teensy-linux_x86_64-1.110301.0.tar.gz",
+            "hash": "sha256-lYiRxsxohivQeveRQpEXNyHRxaD8u7mwXo4XVk3WUqo="
+          },
+          "x86_64-darwin": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi-teensy/1.110301.0/toolchain-gccarmnoneeabi-teensy-darwin_x86_64-1.110301.0.tar.gz",
+            "hash": "sha256-j4iIDqCiOwHFuq4+PDQ7lKhM6lG86Vf0tVGDRijm8t4="
+          }
+        }
+      }
+    },
+    "platforms/atmelavr": {
+      "name": "atmelavr",
+      "manifest": {
+        "type": "platform",
+        "version": "5.1.0",
+        "spec": {
+          "owner": "platformio",
+          "name": "atmelavr",
+          "id": 8006,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "atmelavr"
+      },
+      "src": {
+        "universal": {
+          "url": "https://dl.registry.platformio.org/download/platformio/platform/atmelavr/5.1.0/atmelavr-5.1.0.tar.gz",
+          "hash": "sha256-0XGSJi0KwN04/98qUTlzkmYtm1K95fc4JWJoYIhLQhk="
+        }
+      }
+    },
+    "platforms/raspberrypi": {
+      "name": "raspberrypi",
+      "manifest": {
+        "type": "platform",
+        "version": "1.15.0",
+        "spec": {
+          "owner": "platformio",
+          "name": "raspberrypi",
+          "id": 12119,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "raspberrypi"
+      },
+      "src": {
+        "universal": {
+          "url": "https://dl.registry.platformio.org/download/platformio/platform/raspberrypi/1.15.0/raspberrypi-1.15.0.tar.gz",
+          "hash": "sha256-EbfZzXARKUajVTiSoBAPRkS+dQ26tqDMzG8IIPfB7mg="
+        }
+      }
+    },
+    "platforms/teensy": {
+      "name": "teensy",
+      "manifest": {
+        "type": "platform",
+        "version": "5.0.0",
+        "spec": {
+          "owner": "platformio",
+          "name": "teensy",
+          "id": 8021,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "teensy"
+      },
+      "src": {
+        "universal": {
+          "url": "https://dl.registry.platformio.org/download/platformio/platform/teensy/5.0.0/teensy-5.0.0.tar.gz",
+          "hash": "sha256-6m5cVtlmi77fJK84q6yq/losi4o0794ylrndx8SrWrY="
+        }
+      }
+    }
+  }
+}

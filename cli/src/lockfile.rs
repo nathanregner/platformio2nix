@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, fmt::Display, path::PathBuf};
+use std::{collections::BTreeMap, fmt::Display};
 
 use base64::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -6,34 +6,35 @@ use url::Url;
 
 use crate::{
     manifest::{ExternalSpec, PackageManifest},
-    registry,
+    registry::{self, SystemSpec},
 };
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "version")]
 pub enum Lockfile {
-    V1 {
+    #[serde(rename = "2")]
+    V2 {
         dependencies: BTreeMap<String, Dependency>,
     },
 }
 
 impl Default for Lockfile {
     fn default() -> Self {
-        Self::V1 {
+        Self::V2 {
             dependencies: BTreeMap::default(),
         }
     }
 }
 
 impl Lockfile {
-    pub fn add_dependency(&mut self, dependency: Dependency) {
-        let Self::V1 { dependencies, .. } = self;
-        if let Some(old) = dependencies.insert(dependency.name.clone(), dependency) {
-            let new = &dependencies[&old.name];
+    pub fn add_dependency(&mut self, install_path: String, dependency: Dependency) {
+        let Self::V2 { dependencies, .. } = self;
+        if let Some(old) = dependencies.insert(install_path.clone(), dependency) {
+            let new = &dependencies[&install_path];
             if old.manifest != new.manifest {
                 log::warn!(r#"Found duplicate dependency "{old}", using "{new}"#)
             }
-        }
+        };
     }
 }
 
@@ -69,74 +70,58 @@ impl NixSystem {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Dependency {
     pub name: String,
-    pub install_path: PathBuf,
-    pub version: String,
-    pub manifest: String,
-    pub systems: BTreeMap<NixSystem, FetchUrl>,
+    pub manifest: PackageManifest,
+    pub src: Src,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
+pub enum Src {
+    Universal(FetchUrl),
+    Systems(BTreeMap<NixSystem, FetchUrl>),
 }
 
 impl Dependency {
-    pub fn from_url(
-        manifest: &PackageManifest,
-        install_path: PathBuf,
-        package_spec: &ExternalSpec,
-        sha256: &[u8],
-    ) -> Self {
-        let systems = NixSystem::ALL
-            .iter()
-            .map(|nix_system| (*nix_system, FetchUrl::new(package_spec.uri.clone(), sha256)))
-            .collect();
-        Self::new(
-            manifest,
-            install_path,
-            package_spec.name.clone(),
-            manifest.version.clone(),
-            systems,
-        )
+    pub fn from_url(manifest: PackageManifest, package_spec: &ExternalSpec, sha256: &[u8]) -> Self {
+        let src = Src::Universal(FetchUrl::new(package_spec.uri.clone(), sha256));
+        Self::new(manifest, package_spec.name.clone(), src)
     }
 
-    pub fn from_registry(
-        manifest: &PackageManifest,
-        install_path: PathBuf,
-        package_spec: registry::PackageSpec,
-    ) -> Self {
-        let version = package_spec.version;
-        let systems = NixSystem::ALL
+    pub fn from_registry(manifest: PackageManifest, package_spec: registry::PackageSpec) -> Self {
+        let src = if let Some(universal) = package_spec
+            .version
+            .files
             .iter()
-            .filter_map(|nix_system| {
-                let file = version.supports(&nix_system.to_registry());
-                file.map(|file| (*nix_system, FetchUrl::from(file)))
-            })
-            .collect();
-        Self::new(
-            manifest,
-            install_path,
-            package_spec.name,
-            version.name.clone(),
-            systems,
-        )
+            .find(|f| f.system == SystemSpec::Wildcard)
+        {
+            Src::Universal(FetchUrl::from(universal))
+        } else {
+            Src::Systems(
+                NixSystem::ALL
+                    .iter()
+                    .filter_map(|nix_system| {
+                        let file = package_spec.version.supports(&nix_system.to_registry());
+                        file.map(|file| (*nix_system, FetchUrl::from(file)))
+                    })
+                    .collect(),
+            )
+        };
+
+        Self::new(manifest, package_spec.name, src)
     }
 
-    fn new(
-        manifest: &PackageManifest,
-        install_path: PathBuf,
-        name: String,
-        version: String,
-        systems: BTreeMap<NixSystem, FetchUrl>,
-    ) -> Self {
+    fn new(manifest: PackageManifest, name: String, src: Src) -> Self {
         Self {
             name,
-            install_path,
-            manifest: serde_json::to_string(manifest).expect("serializable manifest"),
-            version,
-            systems,
+            manifest,
+            src,
         }
     }
 }
 
 impl Display for Dependency {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}@{}", self.name, self.version)
+        write!(f, "{}@{}", self.name, self.manifest.version)
     }
 }
 

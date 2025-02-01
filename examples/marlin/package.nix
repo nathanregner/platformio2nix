@@ -30,10 +30,11 @@ stdenv.mkDerivation {
 
   patchPhase = ''
     patchShebangs ./buildroot/bin
+    substituteInPlace buildroot/bin/mftest \
+      --replace-fail 'pio run $SILENT_FLAG -e $TARGET' 'pio run -v -e $TARGET'
   '';
 
   buildPhase = ''
-    echo "PLATFORMIO_CORE_DIR: $PLATFORMIO_CORE_DIR"
     echo '1' | make marlin
   '';
 

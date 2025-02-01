@@ -13,7 +13,7 @@ let
     lockfile = ./platformio2nix.lock;
     overrides = (
       final: prev: {
-        SlowSoftWire = prev.SlowSoftWire.overrideAttrs (drv: {
+        "libdeps/uno/SlowSoftWire" = prev."libdeps/uno/SlowSoftWire".overrideAttrs (drv: {
           nativeBuildInputs = [ libarchive ];
 
           unpackPhase = ''
