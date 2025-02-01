@@ -100,8 +100,11 @@ async fn main() -> eyre::Result<()> {
     let mut lockfile = Lockfile::default();
 
     for artifact in global.into_iter().chain(workspace.into_iter()) {
-        let dependency = client.resolve(artifact).await?;
-        lockfile.add_dependency(dependency);
+        let dependency = client.resolve(artifact.manifest).await?;
+        lockfile.add_dependency(
+            artifact.install_path.to_string_lossy().into_owned(),
+            dependency,
+        );
     }
 
     println!("{}", serde_json::to_string_pretty(&lockfile)?);

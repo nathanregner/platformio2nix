@@ -40,34 +40,23 @@ impl Default for RegistryClient {
 }
 
 impl RegistryClient {
-    pub async fn resolve(&self, artifact: Artifact) -> eyre::Result<Dependency> {
-        match &artifact.manifest.spec {
+    pub async fn resolve(&self, manifest: PackageManifest) -> eyre::Result<Dependency> {
+        match &manifest.spec {
             crate::manifest::PackageSpec::PlatformIO(PlatformIOSpec { owner, name, .. }) => {
                 let package_spec = self
-                    .get_package_spec(
-                        owner,
-                        artifact.manifest.ty,
-                        name,
-                        Some(artifact.manifest.version.to_string()),
-                    )
+                    .get_package_spec(owner, manifest.ty, name, Some(manifest.version.to_string()))
                     .await?;
-                Ok(Dependency::from_registry(
-                    &artifact.manifest,
-                    artifact.install_path,
-                    package_spec,
-                ))
+                Ok(Dependency::from_registry(manifest, package_spec))
             }
             crate::manifest::PackageSpec::External(package_spec) => {
-                self.get_external(&artifact.manifest, artifact.install_path, package_spec)
-                    .await
+                self.get_external(&manifest, package_spec).await
             }
         }
     }
 
-    pub async fn get_external(
+    async fn get_external(
         &self,
         manifest: &PackageManifest,
-        install_path: PathBuf,
         package_spec: &ExternalSpec,
     ) -> eyre::Result<Dependency> {
         let response = self.client.get(package_spec.uri.clone()).send().await?;
@@ -76,15 +65,10 @@ impl RegistryClient {
         let mut hash = Sha256::new();
         hash.update(bytes);
         let hash = hash.finalize();
-        Ok(Dependency::from_url(
-            manifest,
-            install_path,
-            package_spec,
-            &hash,
-        ))
+        Ok(Dependency::from_url(manifest.clone(), package_spec, &hash))
     }
 
-    pub async fn get_package_spec(
+    async fn get_package_spec(
         &self,
         owner: &str,
         ty: PackageType,

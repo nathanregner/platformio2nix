@@ -15,7 +15,7 @@ pub struct Artifact {
 }
 
 /// .piopm package manifest file
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Eq, PartialEq, Clone, Debug)]
 pub struct PackageManifest {
     #[serde(rename = "type")]
     pub ty: PackageType,
@@ -45,14 +45,14 @@ impl PackageType {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Eq, PartialEq, Clone, Debug)]
 #[serde(untagged)]
 pub enum PackageSpec {
     PlatformIO(PlatformIOSpec),
     External(ExternalSpec),
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Eq, PartialEq, Clone, Debug)]
 pub struct PlatformIOSpec {
     pub owner: String,
     pub name: String,
@@ -60,7 +60,7 @@ pub struct PlatformIOSpec {
     _extra: BTreeMap<String, Value>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Eq, PartialEq, Clone, Debug)]
 pub struct ExternalSpec {
     pub name: String,
     pub uri: Url,
