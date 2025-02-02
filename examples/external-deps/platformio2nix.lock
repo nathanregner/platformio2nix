@@ -26,7 +26,7 @@
       "name": "SlowSoftWire",
       "manifest": {
         "type": "library",
-        "version": "0.0.0+20250201135053",
+        "version": "0.0.0+20250202121646",
         "spec": {
           "name": "SlowSoftWire",
           "uri": "https://github.com/felias-fogg/SlowSoftWire/archive/f34d777f39.zip",
@@ -68,7 +68,7 @@
       "name": "tool-scons",
       "manifest": {
         "type": "tool",
-        "version": "4.40700.0",
+        "version": "4.40801.0",
         "spec": {
           "owner": "platformio",
           "name": "tool-scons",
@@ -80,8 +80,8 @@
       },
       "src": {
         "universal": {
-          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40700.0/tool-scons-4.40700.0.tar.gz",
-          "hash": "sha256-AtWAJ9UsR99TNBJ6rb6YZvp+Ega/IZIGb4mx/qIP2VM="
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40801.0/tool-scons-4.40801.0.tar.gz",
+          "hash": "sha256-KJsavzibcwq1oQGO2fyE4i0wHg0WxkVI6521v4ulnQY="
         }
       }
     },
