@@ -1,5 +1,6 @@
 use std::{
     collections::BTreeMap,
+    fs,
     path::{Path, PathBuf},
 };
 
@@ -70,25 +71,28 @@ pub struct ExternalSpec {
 
 pub fn extract_artifacts(root: &Path) -> eyre::Result<Vec<Artifact>> {
     let mut artifacts = vec![];
-    extract_artifacts_rec(&mut artifacts, root, root)?;
+    extract_artifacts_rec(&mut artifacts, &PathBuf::default(), root)?;
     Ok(artifacts)
 }
 
 fn extract_artifacts_rec(
     artifacts: &mut Vec<Artifact>,
-    root: &Path,
+    parent: &Path,
     dir: &Path,
 ) -> eyre::Result<()> {
     for entry in std::fs::read_dir(dir).with_context(|| format!("reading {dir:?}"))? {
         let entry = entry?;
-        if !entry.file_type()?.is_dir() {
+
+        let path = fs::canonicalize(entry.path())?;
+        if !path.is_dir() {
             continue;
         }
-        let path = entry.path();
+
+        let parent = parent.join(entry.file_name());
 
         let piopm = path.join(".piopm");
         if !piopm.exists() {
-            extract_artifacts_rec(artifacts, root, &path)?;
+            extract_artifacts_rec(artifacts, &parent, &path)?;
             continue;
         }
 
@@ -98,15 +102,9 @@ fn extract_artifacts_rec(
             serde_path_to_error::deserialize::<_, PackageManifest>(de).wrap_err_with(|| {
                 format!("failed to parse manifest file: {}", piopm.to_string_lossy())
             })?;
-        let install_path = path
-            .strip_prefix(root)
-            .wrap_err_with(|| {
-                format!("File {dir:?} is not a child of {root:?}: followed a symlink?")
-            })?
-            .to_path_buf();
         artifacts.push(Artifact {
             manifest,
-            install_path,
+            install_path: parent,
         });
     }
 
