@@ -70,7 +70,7 @@ pub struct ExternalSpec {
 
 pub fn extract_artifacts(root: &Path) -> eyre::Result<Vec<Artifact>> {
     let mut artifacts = vec![];
-    extract_artifacts_rec(&mut artifacts, &root, &root)?;
+    extract_artifacts_rec(&mut artifacts, root, root)?;
     Ok(artifacts)
 }
 
@@ -88,7 +88,7 @@ fn extract_artifacts_rec(
 
         let piopm = path.join(".piopm");
         if !piopm.exists() {
-            extract_artifacts_rec(artifacts, &root, &path)?;
+            extract_artifacts_rec(artifacts, root, &path)?;
             continue;
         }
 

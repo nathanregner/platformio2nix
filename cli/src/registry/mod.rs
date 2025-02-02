@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use color_eyre::eyre::{self, Context};
 use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
 use reqwest::{Client, Url};
@@ -12,7 +10,7 @@ use sha2::{Digest, Sha256};
 
 use crate::{
     lockfile::Dependency,
-    manifest::{Artifact, ExternalSpec, PackageManifest, PackageType, PlatformIOSpec},
+    manifest::{ExternalSpec, PackageManifest, PackageType, PlatformIOSpec},
 };
 
 pub struct RegistryClient {
@@ -131,16 +129,12 @@ pub struct PackageSpec {
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct VersionSpec {
-    pub name: String,
     pub files: Vec<File>,
 }
 
 impl VersionSpec {
     pub fn supports(&self, system: &System) -> Option<&File> {
-        self.files
-            .iter()
-            .filter(|f| f.system.supports(system))
-            .next()
+        self.files.iter().find(|f| f.system.supports(system))
     }
 }
 
@@ -179,7 +173,7 @@ impl SystemSpec {
     pub fn supports(&self, system: &System) -> bool {
         match self {
             SystemSpec::Wildcard => true,
-            SystemSpec::Systems(systems) => systems.contains(&system),
+            SystemSpec::Systems(systems) => systems.contains(system),
         }
     }
 }

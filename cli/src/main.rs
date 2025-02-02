@@ -39,10 +39,11 @@ impl Args {
             return Ok(core_dir.to_owned());
         }
 
-        if let Some(core_dir) = env::var("PLATFORMIO_CORE_DIR").ok() {
+        if let Ok(core_dir) = env::var("PLATFORMIO_CORE_DIR") {
             return Ok(PathBuf::from(core_dir));
         }
 
+        #[expect(deprecated)] // nix doesn't support Windows anyway
         if let Some(home_dir) = env::home_dir() {
             return Ok(home_dir.join(".platformio"));
         }
@@ -55,7 +56,7 @@ impl Args {
             return Ok(Some(workspace_dir.to_owned()));
         }
 
-        if let Some(workspace_dir) = env::var("PLATFORMIO_WORKSPACE_DIR").ok() {
+        if let Ok(workspace_dir) = env::var("PLATFORMIO_WORKSPACE_DIR") {
             return Ok(Some(PathBuf::from(workspace_dir)));
         }
 
