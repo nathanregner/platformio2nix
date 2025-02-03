@@ -26,6 +26,27 @@
       "name": "tool-scons",
       "manifest": {
         "type": "tool",
+        "version": "4.40801.0",
+        "spec": {
+          "owner": "platformio",
+          "name": "tool-scons",
+          "id": 8192,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "tool-scons"
+      },
+      "src": {
+        "universal": {
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40801.0/tool-scons-4.40801.0.tar.gz",
+          "hash": "sha256-KJsavzibcwq1oQGO2fyE4i0wHg0WxkVI6521v4ulnQY="
+        }
+      }
+    },
+    "packages/tool-scons@4.40700.0": {
+      "name": "tool-scons",
+      "manifest": {
+        "type": "tool",
         "version": "4.40700.0",
         "spec": {
           "owner": "platformio",
