@@ -32,6 +32,9 @@
         }
       );
 
-      checks = packages;
+      checks = import ../mkChecks.nix {
+        inherit platformio2nix packages;
+        src = ./.;
+      };
     };
 }

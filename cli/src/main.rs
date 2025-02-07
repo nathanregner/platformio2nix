@@ -31,6 +31,11 @@ struct Args {
     /// https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/workspace_dir.html
     #[arg(short, long)]
     workspace_dir: Option<PathBuf>,
+    /// Cache directory for requests to the platformio package registry.
+    ///
+    /// Default: XDG_CONFIG_HOME/platformio2nix
+    #[arg(long)]
+    cache_dir: Option<PathBuf>,
 }
 
 impl Args {
@@ -88,7 +93,7 @@ async fn main() -> eyre::Result<()> {
         .init();
 
     let args = Args::parse();
-    let client = RegistryClient::default();
+    let client = RegistryClient::new(args.cache_dir.as_ref())?;
 
     let global = extract_artifacts(&args.core_dir()?)?;
     let workspace = if let Some(workspace_dir) = args.workspace_dir()? {

@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use color_eyre::eyre::{self, Context};
 use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
 use reqwest::{Client, Url};
@@ -18,12 +20,16 @@ pub struct RegistryClient {
     registry_url: Url,
 }
 
-impl Default for RegistryClient {
-    fn default() -> Self {
-        let cache_path = xdg::BaseDirectories::with_prefix("platformio2nix")
-            .expect("valid base directories")
-            .create_cache_directory("registry")
-            .expect("valid cache directory");
+impl RegistryClient {
+    pub fn new(cache_dir: Option<impl AsRef<Path>>) -> eyre::Result<Self> {
+        let cache_path = match cache_dir {
+            Some(cache_dir) => {
+                std::fs::create_dir_all(&cache_dir)?;
+                cache_dir.as_ref().to_owned()
+            }
+            None => xdg::BaseDirectories::with_prefix("platformio2nix")?
+                .create_cache_directory("registry")?,
+        };
         let client = ClientBuilder::new(Client::new())
             .with(Cache(HttpCache {
                 mode: CacheMode::ForceCache,
@@ -31,15 +37,13 @@ impl Default for RegistryClient {
                 options: HttpCacheOptions::default(),
             }))
             .build();
-        Self {
+        Ok(Self {
             client,
             registry_url: Url::parse("https://api.registry.platformio.org")
                 .expect("valid default registry"),
-        }
+        })
     }
-}
 
-impl RegistryClient {
     pub async fn resolve(&self, manifest: PackageManifest) -> eyre::Result<Dependency> {
         match &manifest.spec {
             crate::manifest::PackageSpec::PlatformIO(PlatformIOSpec { owner, name, .. }) => {
