@@ -30,6 +30,10 @@ let
             echo "$LIBRARY" >> $out/library.json
           '';
         });
+
+        "packages/toolchain-atmelavr" = prev."packages/toolchain-atmelavr".overrideAttrs (drv: {
+          dontFixup = stdenv.hostPlatform.isDarwin;
+        });
       }
     );
   };

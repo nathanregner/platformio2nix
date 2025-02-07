@@ -11,6 +11,13 @@ let
   src = ./.;
   setupHook = makePlatformIOSetupHook {
     lockfile = ./platformio2nix.lock;
+    overrides = (
+      final: prev: {
+        "packages/toolchain-atmelavr" = prev."packages/toolchain-atmelavr".overrideAttrs (drv: {
+          dontFixup = stdenv.hostPlatform.isDarwin;
+        });
+      }
+    );
   };
 in
 stdenv.mkDerivation {

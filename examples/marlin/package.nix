@@ -15,7 +15,16 @@ let
     fetchSubmodules = false;
     sha256 = "sha256-OQ7bUvc2W54UqzsoxgATQg3yl1v9e+8duJI7bL2fvII=";
   };
-  setupHook = makePlatformIOSetupHook { lockfile = ./platformio2nix.lock; };
+  setupHook = makePlatformIOSetupHook {
+    lockfile = ./platformio2nix.lock;
+    overrides = (
+      final: prev: {
+        "packages/toolchain-atmelavr" = prev."packages/toolchain-atmelavr".overrideAttrs (drv: {
+          dontFixup = stdenv.hostPlatform.isDarwin;
+        });
+      }
+    );
+  };
 in
 stdenv.mkDerivation {
   name = "marlin";
