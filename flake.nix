@@ -58,7 +58,7 @@
 
             treefmt = import ./treefmt.nix;
 
-            devShells.default = pkgs.mkShell {
+            devShells.default = pkgs.mkShellNoCC {
               inherit (platformio2nix) nativeBuildInputs buildInputs;
               packages =
                 [ config.treefmt.build.wrapper ]
@@ -75,7 +75,7 @@
                   '')
                 ]);
 
-              LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.openssl ];
+              LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.openssl.dev ];
               PLATFORMIO_CORE_DIR = ".pio";
               RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
             };
