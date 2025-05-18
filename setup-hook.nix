@@ -1,13 +1,10 @@
 {
   lib,
   fetchurl,
-  linkFarm,
   makeSetupHook,
-  runCommand,
   stdenv,
   writeShellScript,
   writeShellScriptBin,
-  writeTextFile,
 }:
 
 {
@@ -34,7 +31,7 @@ let
         runHook preBuild
         mkdir -p "$out"
         mv * "$out"
-        echo "$MANIFEST" > "$out/.piopm"
+        echo "$MANIFEST" >"$out/.piopm"
         runHook postBuild
       '';
 
