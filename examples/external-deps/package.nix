@@ -11,27 +11,25 @@ let
   src = ./.;
   setupHook = makePlatformIOSetupHook {
     lockfile = ./platformio2nix.lock;
-    overrides = (
-      final: prev: {
-        "libdeps/uno/SlowSoftWire" = prev."libdeps/uno/SlowSoftWire".overrideAttrs (drv: {
-          nativeBuildInputs = [ libarchive ];
+    overrides = final: prev: {
+      "libdeps/uno/SlowSoftWire" = prev."libdeps/uno/SlowSoftWire".overrideAttrs (drv: {
+        nativeBuildInputs = [ libarchive ];
 
-          unpackPhase = ''
-            bsdtar xf $src --strip-components=1
-          '';
+        unpackPhase = ''
+          bsdtar xf $src --strip-components=1
+        '';
 
-          # TODO: platformio2nix should really generate this file
-          LIBRARY = builtins.toJSON {
-            name = drv.pname;
-            inherit (drv) version;
-          };
+        # TODO: platformio2nix should really generate this file
+        LIBRARY = builtins.toJSON {
+          name = drv.pname;
+          inherit (drv) version;
+        };
 
-          postBuild = ''
-            echo "$LIBRARY" >> $out/library.json
-          '';
-        });
-      }
-    );
+        postBuild = ''
+          echo "$LIBRARY" >>$out/library.json
+        '';
+      });
+    };
   };
 in
 stdenv.mkDerivation {
