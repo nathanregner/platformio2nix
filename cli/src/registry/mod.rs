@@ -3,8 +3,8 @@ use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheO
 use reqwest::{Client, Url};
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use serde::{
-    de::{DeserializeOwned, Visitor},
     Deserialize,
+    de::{DeserializeOwned, Visitor},
 };
 use sha2::{Digest, Sha256};
 

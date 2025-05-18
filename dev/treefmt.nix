@@ -1,4 +1,3 @@
-{ ... }:
 {
   projectRootFile = "flake.nix";
 

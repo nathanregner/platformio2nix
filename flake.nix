@@ -3,19 +3,13 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
-    treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
   outputs =
     {
       self,
-      nixpkgs,
       flake-parts,
-      treefmt-nix,
       ...
     }@inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
@@ -25,67 +19,52 @@
         "x86_64-darwin"
         "x86_64-linux"
       ];
-      imports = [ inputs.treefmt-nix.flakeModule ];
+
+      imports = [ inputs.flake-parts.flakeModules.partitions ];
+
+      partitionedAttrs = {
+        checks = "dev";
+        devShells = "dev";
+        formatter = "dev";
+      };
+      partitions.dev = {
+        extraInputsFlake = ./dev;
+        extraInputs = {
+          platformio2nix = self;
+          examples =
+            let
+              importExample = path: (import path).outputs { platformio2nix = self; };
+            in
+            {
+              external-deps = importExample ./examples/external-deps/flake.nix;
+              marlin = importExample ./examples/marlin/flake.nix;
+              multi-env = importExample ./examples/multi-env/flake.nix;
+            };
+        };
+        module = {
+          imports = [ ./dev/flake-module.nix ];
+        };
+      };
 
       perSystem =
+        { pkgs, ... }:
         {
-          config,
-          system,
-          inputs',
-          pkgs,
-          lib,
-          ...
-        }:
-        (
-          let
-            platformio2nix = pkgs.rustPlatform.buildRustPackage {
-              pname = "platformio2nix";
-              version = "0.2.0";
-              src = ./cli;
-              cargoLock.lockFile = ./cli/Cargo.lock;
+          legacyPackages = {
+            makePlatformIOSetupHook = pkgs.callPackage ./setup-hook.nix { };
+          };
 
-              nativeBuildInputs =
-                with pkgs;
-                [ pkg-config ] ++ lib.optionals stdenv.isDarwin [ darwin.apple_sdk.frameworks.SystemConfiguration ];
-              buildInputs = with pkgs; [ openssl ];
-            };
-          in
-          {
-            packages = rec {
-              default = platformio2nix;
-              inherit platformio2nix;
-            };
-
-            treefmt = import ./treefmt.nix;
-
-            devShells.default = pkgs.mkShellNoCC {
-              inherit (platformio2nix) nativeBuildInputs buildInputs;
-              packages =
-                [ config.treefmt.build.wrapper ]
-                ++ (with pkgs; [
-                  cargo
-                  clippy
-                  rust-analyzer
-                  rustfmt
-                  platformio
-
-                  # for convenience when updating examples
-                  (writeShellScriptBin "platformio2nix" ''
-                    cargo run --manifest-path "$FLAKE_ROOT/cli/Cargo.toml" -- "$@"
-                  '')
-                ]);
-
-              LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.openssl.dev ];
-              PLATFORMIO_CORE_DIR = ".pio";
-              RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
-            };
-          }
-        );
+          packages = rec {
+            platformio2nix = pkgs.callPackage ./package.nix { };
+            default = platformio2nix;
+          };
+        };
 
       flake = {
         overlays.default = final: prev: {
-          inherit (self.packages.${final.system}) platformio2nix;
-          makePlatformIOSetupHook = final.callPackage ./setup-hook.nix { };
+          inherit (self.legacyPackages.${final.system})
+            makePlatformIOSetupHook
+            platformio2nix
+            ;
         };
       };
     };
