@@ -9,7 +9,7 @@
   outputs =
     { platformio2nix, ... }:
     let
-      nixpkgs = platformio2nix.inputs.nixpkgs;
+      inherit (platformio2nix.inputs) nixpkgs;
       inherit (nixpkgs) lib;
       forAllSystems = lib.genAttrs [
         "aarch64-darwin"

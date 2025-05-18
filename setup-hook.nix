@@ -22,7 +22,7 @@ let
     in
     stdenv.mkDerivation {
       pname = dep.name;
-      version = dep.manifest.version;
+      inherit (dep.manifest) version;
       src = fetchurl src;
       sourceRoot = ".";
 
