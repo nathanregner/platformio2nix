@@ -1,17 +1,20 @@
 mod lockfile;
 mod manifest;
 mod registry;
+mod resolver;
+
+use std::collections::HashSet;
 
 use clap::Parser;
-use color_eyre::eyre::{self};
+use color_eyre::eyre::{self, Context};
 use lockfile::Lockfile;
-use manifest::extract_artifacts;
-use registry::RegistryClient;
 use serde::Deserialize;
 use std::{
     env::{self},
-    path::PathBuf,
+    path::{Path, PathBuf},
 };
+
+use crate::{manifest::extract_artifacts, resolver::Resolver};
 
 /// Generate a platformio2nix lockfile to stdout
 #[derive(Parser, Debug)]
@@ -31,6 +34,14 @@ struct Args {
     /// https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/workspace_dir.html
     #[arg(short, long)]
     workspace_dir: Option<PathBuf>,
+    /// Lockfile to read from/write to.
+    ///
+    /// Default: `platformio2nix.lock`
+    #[arg(short, long)]
+    lockfile: Option<PathBuf>,
+    /// Force resolution of hashes, even if a dependency already exists in the lockfile
+    #[arg(short, long, default_value = "false")]
+    disable_cache: bool,
 }
 
 impl Args {
@@ -43,7 +54,6 @@ impl Args {
             return Ok(PathBuf::from(core_dir));
         }
 
-        #[expect(deprecated)] // nix doesn't support Windows anyway
         if let Some(home_dir) = env::home_dir() {
             return Ok(home_dir.join(".platformio"));
         }
@@ -72,6 +82,12 @@ impl Args {
 
         Ok(None)
     }
+
+    fn lockfile_path(&self) -> PathBuf {
+        self.lockfile
+            .clone()
+            .unwrap_or_else(|| PathBuf::from("platformio2nix.lock"))
+    }
 }
 
 #[derive(Deserialize, Debug)]
@@ -80,34 +96,77 @@ pub enum Repository {
     Git { url: String },
 }
 
+fn load_existing_lockfile(path: &Path) -> Option<Lockfile> {
+    if !path.exists() {
+        return None;
+    }
+    match std::fs::read_to_string(path) {
+        Err(e) => {
+            log::warn!("Failed to read lockfile {}: {e}", path.display());
+            None
+        }
+        Ok(json) => match serde_json::from_str(&json) {
+            Ok(lockfile) => Some(lockfile),
+            Err(e) => {
+                log::warn!(
+                    "Lockfile {} is invalid, ignoring cache: {e}",
+                    path.display()
+                );
+                None
+            }
+        },
+    }
+}
+
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
     pretty_env_logger::formatted_builder()
-        .filter_level(log::LevelFilter::Warn)
+        .filter_level(log::LevelFilter::Info)
         .parse_default_env()
         .init();
 
     let args = Args::parse();
-    let client = RegistryClient::default();
 
-    let global = extract_artifacts(&args.core_dir()?)?;
+    let lockfile_path = args.lockfile_path();
+    let existing_lockfile = if args.disable_cache {
+        None
+    } else {
+        load_existing_lockfile(&lockfile_path)
+    };
+
+    let resolver = Resolver::new(existing_lockfile);
+
     let workspace = if let Some(workspace_dir) = args.workspace_dir()? {
         extract_artifacts(&workspace_dir)?
     } else {
-        vec![]
+        HashSet::default()
+    };
+    let global = {
+        let mut global = extract_artifacts(&args.core_dir()?)?;
+        global.retain(|package| !workspace.contains(package));
+        global
     };
 
     let mut lockfile = Lockfile::default();
 
+    log::info!(
+        "Locking {} workspace dependencies and {} global dependencies...",
+        workspace.len(),
+        global.len(),
+    );
     for artifact in global.into_iter().chain(workspace.into_iter()) {
-        let dependency = client.resolve(artifact.manifest).await?;
-        lockfile.add_dependency(
-            artifact.install_path.to_string_lossy().into_owned(),
-            dependency,
-        );
+        let install_path = artifact.install_path.to_string_lossy().into_owned();
+        let name = artifact.manifest.spec.name().to_string();
+        let dependency = resolver
+            .resolve(artifact)
+            .await
+            .with_context(|| format!("resolving {name}"))?;
+        lockfile.add_dependency(install_path, dependency);
     }
 
-    println!("{}", serde_json::to_string_pretty(&lockfile)?);
+    lockfile
+        .write_to(&lockfile_path)
+        .with_context(|| format!("writing {lockfile_path:?}"))?;
 
     Ok(())
 }
