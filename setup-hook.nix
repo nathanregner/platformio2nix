@@ -17,8 +17,14 @@ let
   inherit (builtins.fromJSON (builtins.readFile lockfile)) version dependencies;
 
   fetchers = {
-    git = fetchgit;
-    url = fetchurl;
+    git = {
+      fetcher = fetchgit;
+      sourceRoot = null;
+    };
+    url = {
+      fetcher = fetchurl;
+      sourceRoot = ".";
+    };
   };
 
   initialDeps = builtins.mapAttrs (
@@ -26,17 +32,18 @@ let
     let
       throwSystem = throw "${dep.name} unsupported system: ${stdenv.system}: ${builtins.attrNames dep.src}";
       universal = dep.src.universal or null;
-      src =
+      inherit (fetchers.${universal.type or "url"}) fetcher sourceRoot;
+      src = fetcher (
         if universal != null then
-          fetchers.${universal.type or "url"} (removeAttrs universal [ "type" ])
+          removeAttrs universal [ "type" ]
         else
-          fetchurl (dep.src.systems.${stdenv.system} or throwSystem);
+          dep.src.systems.${stdenv.system} or throwSystem
+      );
     in
     stdenv.mkDerivation {
       pname = dep.name;
       inherit (dep.manifest) version;
-      inherit src;
-      sourceRoot = ".";
+      inherit src sourceRoot;
 
       env.MANIFEST = builtins.toJSON dep.manifest;
       buildPhase = ''
@@ -50,7 +57,7 @@ let
       passthru = {
         inherit (dep) manifest;
         inherit installPath;
-        mutableInstall = src.universal.git or null == "git";
+        mutableInstall = false;
       };
     }
   ) dependencies;
