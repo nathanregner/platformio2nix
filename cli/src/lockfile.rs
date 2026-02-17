@@ -10,6 +10,13 @@ use crate::{
 };
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct FetchGit {
+    pub url: Url,
+    pub rev: String,
+    pub hash: String,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "version")]
 pub enum Lockfile {
     #[serde(rename = "2")]
@@ -75,16 +82,40 @@ pub struct Dependency {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(tag = "type", rename_all = "camelCase")]
+pub enum UniversalSrc {
+    Url(FetchUrl),
+    Git(FetchGit),
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub enum Src {
-    Universal(FetchUrl),
+    Universal(UniversalSrc),
     Systems(BTreeMap<NixSystem, FetchUrl>),
 }
 
 impl Dependency {
     pub fn from_url(manifest: PackageManifest, package_spec: &ExternalSpec, sha256: &[u8]) -> Self {
-        let src = Src::Universal(FetchUrl::new(package_spec.uri.clone(), sha256));
+        let src = Src::Universal(UniversalSrc::Url(FetchUrl::new(
+            package_spec.uri.clone(),
+            sha256,
+        )));
         Self::new(manifest, package_spec.name.clone(), src)
+    }
+
+    pub fn from_git(
+        manifest: PackageManifest,
+        name: String,
+        url: Url,
+        rev: String,
+        hash: String,
+    ) -> Self {
+        Self::new(
+            manifest,
+            name,
+            Src::Universal(UniversalSrc::Git(FetchGit { url, rev, hash })),
+        )
     }
 
     pub fn from_registry(manifest: PackageManifest, package_spec: registry::PackageSpec) -> Self {
@@ -94,7 +125,7 @@ impl Dependency {
             .iter()
             .find(|f| f.system == SystemSpec::Wildcard)
         {
-            Src::Universal(FetchUrl::from(universal))
+            Src::Universal(UniversalSrc::Url(FetchUrl::from(universal)))
         } else {
             Src::Systems(
                 NixSystem::ALL

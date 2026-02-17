@@ -1,5 +1,6 @@
 {
   lib,
+  fetchgit,
   fetchurl,
   makeSetupHook,
   stdenv,
@@ -18,12 +19,24 @@ let
     installPath: dep:
     let
       throwSystem = throw "${dep.name} unsupported system: ${stdenv.system}: ${builtins.attrNames dep.src}";
-      src = dep.src.universal or dep.src.systems.${stdenv.system} or throwSystem;
+      universalSrc = dep.src.universal or null;
+      # "type" was introduced with git support; older lockfiles omit it (implying "url")
+      universalType = universalSrc.type or "url";
+      src =
+        if universalType == "git" then
+          fetchgit {
+            inherit (universalSrc) url rev hash;
+            fetchSubmodules = true;
+          }
+        else if universalSrc != null then
+          fetchurl universalSrc
+        else
+          fetchurl (dep.src.systems.${stdenv.system} or throwSystem);
     in
     stdenv.mkDerivation {
       pname = dep.name;
       inherit (dep.manifest) version;
-      src = fetchurl src;
+      inherit src;
       sourceRoot = ".";
 
       env.MANIFEST = builtins.toJSON dep.manifest;
@@ -38,7 +51,7 @@ let
       passthru = {
         inherit (dep) manifest;
         inherit installPath;
-        mutableInstall = false;
+        mutableInstall = universalType == "git";
       };
     }
   ) dependencies;

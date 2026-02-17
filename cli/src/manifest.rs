@@ -1,5 +1,6 @@
 use std::{
     collections::BTreeMap,
+    ffi::OsStr,
     fs,
     path::{Path, PathBuf},
 };
@@ -12,7 +13,11 @@ use url::Url;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Artifact {
     pub manifest: PackageManifest,
+    /// Relative install path for the lockfile (`.git` suffix stripped for git packages)
     pub install_path: PathBuf,
+    /// Absolute path where the `.piopm` file was found
+    #[serde(skip)]
+    pub full_path: PathBuf,
 }
 
 /// .piopm package manifest file
@@ -49,8 +54,17 @@ impl PackageType {
 #[derive(Serialize, Deserialize, Eq, PartialEq, Clone, Debug)]
 #[serde(untagged)]
 pub enum PackageSpec {
-    PlatformIO(PlatformIOSpec),
     External(ExternalSpec),
+    PlatformIO(PlatformIOSpec),
+}
+
+impl PackageSpec {
+    pub fn name(&self) -> &str {
+        match self {
+            PackageSpec::External(s) => &s.name,
+            PackageSpec::PlatformIO(s) => &s.name,
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Eq, PartialEq, Clone, Debug)]
@@ -102,9 +116,17 @@ fn extract_artifacts_rec(
             serde_path_to_error::deserialize::<_, PackageManifest>(de).wrap_err_with(|| {
                 format!("failed to parse manifest file: {}", piopm.to_string_lossy())
             })?;
+        // For git packages, .piopm lives inside .git/; strip that suffix so the
+        // install path points to the actual working-tree directory.
+        let install_path = if parent.file_name() == Some(OsStr::new(".git")) {
+            parent.parent().unwrap_or(&parent).to_path_buf()
+        } else {
+            parent
+        };
         artifacts.push(Artifact {
             manifest,
-            install_path: parent,
+            install_path,
+            full_path: path,
         });
     }
 

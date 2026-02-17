@@ -3,7 +3,7 @@ mod manifest;
 mod registry;
 
 use clap::Parser;
-use color_eyre::eyre::{self};
+use color_eyre::eyre::{self, Context};
 use lockfile::Lockfile;
 use manifest::extract_artifacts;
 use registry::RegistryClient;
@@ -43,7 +43,6 @@ impl Args {
             return Ok(PathBuf::from(core_dir));
         }
 
-        #[expect(deprecated)] // nix doesn't support Windows anyway
         if let Some(home_dir) = env::home_dir() {
             return Ok(home_dir.join(".platformio"));
         }
@@ -83,7 +82,7 @@ pub enum Repository {
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
     pretty_env_logger::formatted_builder()
-        .filter_level(log::LevelFilter::Warn)
+        .filter_level(log::LevelFilter::Info)
         .parse_default_env()
         .init();
 
@@ -100,11 +99,13 @@ async fn main() -> eyre::Result<()> {
     let mut lockfile = Lockfile::default();
 
     for artifact in global.into_iter().chain(workspace.into_iter()) {
-        let dependency = client.resolve(artifact.manifest).await?;
-        lockfile.add_dependency(
-            artifact.install_path.to_string_lossy().into_owned(),
-            dependency,
-        );
+        let install_path = artifact.install_path.to_string_lossy().into_owned();
+        let name = artifact.manifest.spec.name().to_string();
+        let dependency = client
+            .resolve(artifact)
+            .await
+            .with_context(|| format!("resolving {name}"))?;
+        lockfile.add_dependency(install_path, dependency);
     }
 
     println!("{}", serde_json::to_string_pretty(&lockfile)?);

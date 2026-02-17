@@ -1,4 +1,5 @@
 {
+  nix-prefetch-git,
   openssl,
   pkg-config,
   rustPlatform,
@@ -10,5 +11,8 @@ rustPlatform.buildRustPackage {
   cargoLock.lockFile = ./cli/Cargo.lock;
 
   nativeBuildInputs = [ pkg-config ];
-  buildInputs = [ openssl ];
+  buildInputs = [
+    nix-prefetch-git
+    openssl
+  ];
 }

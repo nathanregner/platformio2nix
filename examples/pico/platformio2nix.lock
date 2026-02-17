@@ -1,0 +1,152 @@
+{
+  "version": "2",
+  "dependencies": {
+    "packages/framework-picosdk": {
+      "name": "framework-picosdk",
+      "manifest": {
+        "type": "tool",
+        "version": "1.20101.0+sha.7bb22c5",
+        "spec": {
+          "name": "framework-picosdk",
+          "uri": "git+https://github.com/maxgerhardt/pico-sdk.git#7bb22c52d1553779c21c0dc1d007e2cc8d54885d",
+          "id": null,
+          "owner": "platformio",
+          "requirements": null
+        },
+        "name": "framework-picosdk"
+      },
+      "src": {
+        "universal": {
+          "type": "git",
+          "url": "https://github.com/maxgerhardt/pico-sdk.git",
+          "rev": "7bb22c52d1553779c21c0dc1d007e2cc8d54885d",
+          "hash": "sha256-JLz/eKs66juoE64dCiHNmtK7MzeYzoLVNN7FsCmfHN4="
+        }
+      }
+    },
+    "packages/tool-picotool-rp2040-earlephilhower": {
+      "name": "tool-picotool-rp2040-earlephilhower",
+      "manifest": {
+        "type": "tool",
+        "version": "5.140200.250530",
+        "spec": {
+          "name": "tool-picotool-rp2040-earlephilhower",
+          "uri": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/4.1.0/x86_64-linux-gnu.picotool-c56c005.250530.tar.gz",
+          "id": null,
+          "owner": "platformio",
+          "requirements": null
+        },
+        "name": "tool-picotool-rp2040-earlephilhower"
+      },
+      "src": {
+        "universal": {
+          "type": "url",
+          "url": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/4.1.0/x86_64-linux-gnu.picotool-c56c005.250530.tar.gz",
+          "hash": "sha256-NU5Ajmy+A9FiYj886J7k+CgnN0zcw8sDbJX8OejvzoA="
+        }
+      }
+    },
+    "packages/tool-scons": {
+      "name": "tool-scons",
+      "manifest": {
+        "type": "tool",
+        "version": "4.40801.0",
+        "spec": {
+          "owner": "platformio",
+          "name": "tool-scons",
+          "id": 8192,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "tool-scons"
+      },
+      "src": {
+        "universal": {
+          "type": "url",
+          "url": "https://dl.registry.platformio.org/download/platformio/tool/tool-scons/4.40801.0/tool-scons-4.40801.0.tar.gz",
+          "hash": "sha256-KJsavzibcwq1oQGO2fyE4i0wHg0WxkVI6521v4ulnQY="
+        }
+      }
+    },
+    "packages/toolchain-gccarmnoneeabi": {
+      "name": "toolchain-gccarmnoneeabi",
+      "manifest": {
+        "type": "tool",
+        "version": "1.90301.200702",
+        "spec": {
+          "owner": "platformio",
+          "name": "toolchain-gccarmnoneeabi",
+          "id": 8207,
+          "requirements": null,
+          "uri": null
+        },
+        "name": "toolchain-gccarmnoneeabi"
+      },
+      "src": {
+        "systems": {
+          "aarch64-linux": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi/1.90301.200702/toolchain-gccarmnoneeabi-linux_aarch64-1.90301.200702.tar.gz",
+            "hash": "sha256-KroOXYYM22o2r4XL4JQgXn4qnkf6nCSkH8f0NffB9Nc="
+          },
+          "aarch64-darwin": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi/1.90301.200702/toolchain-gccarmnoneeabi-darwin_x86_64-1.90301.200702.tar.gz",
+            "hash": "sha256-8rK8/or3Iz2cz5g7FY5R0eAPYaoMJc9ojqY1nfZwES0="
+          },
+          "x86_64-linux": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi/1.90301.200702/toolchain-gccarmnoneeabi-linux_x86_64-1.90301.200702.tar.gz",
+            "hash": "sha256-+7xX/hVg++bh1YkKk0JY9rFDn8l28+9YTRK7iq6bPH0="
+          },
+          "x86_64-darwin": {
+            "url": "https://dl.registry.platformio.org/download/platformio/tool/toolchain-gccarmnoneeabi/1.90301.200702/toolchain-gccarmnoneeabi-darwin_x86_64-1.90301.200702.tar.gz",
+            "hash": "sha256-8rK8/or3Iz2cz5g7FY5R0eAPYaoMJc9ojqY1nfZwES0="
+          }
+        }
+      }
+    },
+    "platforms/raspberrypi": {
+      "name": "platform-raspberrypi",
+      "manifest": {
+        "type": "platform",
+        "version": "1.17.0+sha.6af38e2",
+        "spec": {
+          "name": "platform-raspberrypi",
+          "uri": "git+https://github.com/maxgerhardt/platform-raspberrypi.git#v1.4.0-gcc14-arduinopico460",
+          "id": null,
+          "owner": null,
+          "requirements": null
+        },
+        "name": "raspberrypi"
+      },
+      "src": {
+        "universal": {
+          "type": "git",
+          "url": "https://github.com/maxgerhardt/platform-raspberrypi.git",
+          "rev": "6af38e26547c56cebdbfa4ab564eb361f7d27d4f",
+          "hash": "sha256-szvibK8ujyZfuC4bv4+fSvIVWOHc/EA4Mq32jSGc60A="
+        }
+      }
+    },
+    "platforms/raspberrypi@src-d5b6f44125ad5e094769df758e95713f": {
+      "name": "platform-raspberrypi",
+      "manifest": {
+        "type": "platform",
+        "version": "1.17.0",
+        "spec": {
+          "name": "platform-raspberrypi",
+          "uri": "https://github.com/maxgerhardt/platform-raspberrypi/archive/refs/tags/v1.4.0-gcc14-arduinopico460.tar.gz",
+          "id": null,
+          "owner": null,
+          "requirements": null
+        },
+        "name": "raspberrypi"
+      },
+      "src": {
+        "universal": {
+          "type": "url",
+          "url": "https://github.com/maxgerhardt/platform-raspberrypi/archive/refs/tags/v1.4.0-gcc14-arduinopico460.tar.gz",
+          "hash": "sha256-7FnhasTuCfzNRx8uNnkO3y64GrYibHT6Q1t3IxrTbiY="
+        }
+      }
+    }
+  }
+}

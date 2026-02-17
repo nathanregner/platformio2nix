@@ -1,3 +1,5 @@
+use std::process::Output;
+
 use color_eyre::eyre::{self, Context};
 use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
 use reqwest::{Client, Url};
@@ -7,10 +9,11 @@ use serde::{
     de::{DeserializeOwned, Visitor},
 };
 use sha2::{Digest, Sha256};
+use tokio::process::Command;
 
 use crate::{
     lockfile::Dependency,
-    manifest::{ExternalSpec, PackageManifest, PackageType, PlatformIOSpec},
+    manifest::{Artifact, ExternalSpec, PackageManifest, PackageType},
 };
 
 pub struct RegistryClient {
@@ -40,18 +43,95 @@ impl Default for RegistryClient {
 }
 
 impl RegistryClient {
-    pub async fn resolve(&self, manifest: PackageManifest) -> eyre::Result<Dependency> {
+    pub async fn resolve(&self, artifact: Artifact) -> eyre::Result<Dependency> {
+        let manifest = &artifact.manifest;
+        let name = manifest.spec.name();
+        log::info!("Resolving {name}...");
         match &manifest.spec {
-            crate::manifest::PackageSpec::PlatformIO(PlatformIOSpec { owner, name, .. }) => {
-                let package_spec = self
-                    .get_package_spec(owner, manifest.ty, name, Some(manifest.version.to_string()))
-                    .await?;
-                Ok(Dependency::from_registry(manifest, package_spec))
+            crate::manifest::PackageSpec::External(spec) => {
+                match spec.uri.as_str().strip_prefix("git+") {
+                    Some(_) => self.get_git(manifest, name, &artifact.full_path).await,
+                    None => self.get_external(manifest, spec).await,
+                }
             }
-            crate::manifest::PackageSpec::External(package_spec) => {
-                self.get_external(&manifest, package_spec).await
+            crate::manifest::PackageSpec::PlatformIO(spec) => {
+                let package_spec = self
+                    .get_package_spec(
+                        &spec.owner,
+                        manifest.ty,
+                        name,
+                        Some(manifest.version.to_string()),
+                    )
+                    .await?;
+                Ok(Dependency::from_registry(manifest.clone(), package_spec))
             }
         }
+    }
+
+    async fn get_git(
+        &self,
+        manifest: &PackageManifest,
+        name: &str,
+        piopm_path: &std::path::Path,
+    ) -> eyre::Result<Dependency> {
+        // The .piopm is inside .git/; the working tree is its parent.
+        let repo_path = if piopm_path.file_name() == Some(std::ffi::OsStr::new(".git")) {
+            piopm_path.parent().unwrap_or(piopm_path)
+        } else {
+            piopm_path
+        };
+
+        let remote = Command::new("git")
+            .args([
+                "-C",
+                &repo_path.to_string_lossy(),
+                "remote",
+                "get-url",
+                "origin",
+            ])
+            .output_success()
+            .await
+            .context("running git remote get-url")?;
+
+        let base_url = Url::parse(String::from_utf8(remote.stdout)?.trim())?;
+
+        let output = Command::new("git")
+            .args(["-C", &repo_path.to_string_lossy(), "rev-parse", "HEAD"])
+            .output_success()
+            .await
+            .context("running git rev-parse")?;
+
+        let rev = String::from_utf8(output.stdout)?.trim().to_string();
+        log::info!("Resolved git {name} to rev {rev}");
+
+        let file_url = format!("file://{}", repo_path.display());
+        let prefetch = Command::new(env!("NIX_PREFETCH_GIT"))
+            .args([
+                "--url",
+                &file_url,
+                "--rev",
+                &rev,
+                "--fetch-submodules",
+                "--quiet",
+            ])
+            .output_success()
+            .await
+            .context("running nix-prefetch-git")?;
+
+        #[derive(Deserialize)]
+        struct PrefetchOutput {
+            hash: String,
+        }
+        let PrefetchOutput { hash } =
+            serde_json::from_slice(&prefetch.stdout).context("parsing nix-prefetch-git output")?;
+
+        Ok(Dependency::from_git(
+            manifest.clone(),
+            name.to_string(),
+            base_url,
+            rev,
+            hash,
+        ))
     }
 
     async fn get_external(
@@ -89,6 +169,23 @@ impl RegistryClient {
         log::info!("Fetching package spec: {}", url);
         let response = self.client.get(url).send().await?;
         extract_json(response).await
+    }
+}
+
+trait CommandExt {
+    async fn output_success(&mut self) -> eyre::Result<Output>
+    where
+        Self: Sized;
+}
+
+impl CommandExt for Command {
+    async fn output_success(&mut self) -> eyre::Result<Output> {
+        let output = self.output().await?;
+        if !output.status.success() {
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            eyre::bail!("process exited with {}: {stderr}", output.status);
+        }
+        Ok(output)
     }
 }
 
