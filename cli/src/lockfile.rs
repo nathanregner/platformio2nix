@@ -10,10 +10,12 @@ use crate::{
 };
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct FetchGit {
     pub url: Url,
     pub rev: String,
     pub hash: String,
+    pub fetch_submodules: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -114,7 +116,14 @@ impl Dependency {
         Self::new(
             manifest,
             name,
-            Src::Universal(UniversalSrc::Git(FetchGit { url, rev, hash })),
+            Src::Universal(UniversalSrc::Git(FetchGit {
+                url,
+                rev,
+                hash,
+                // not always required, but let's be conservative
+                // https://github.com/platformio/platformio-core/blob/c201425a40cc65960671239e900c993dcc159b56/platformio/package/vcsclient.py#L196-L198
+                fetch_submodules: true,
+            })),
         )
     }
 

@@ -15,21 +15,20 @@
 
 let
   inherit (builtins.fromJSON (builtins.readFile lockfile)) version dependencies;
+
+  fetchers = {
+    git = fetchgit;
+    url = fetchurl;
+  };
+
   initialDeps = builtins.mapAttrs (
     installPath: dep:
     let
       throwSystem = throw "${dep.name} unsupported system: ${stdenv.system}: ${builtins.attrNames dep.src}";
-      universalSrc = dep.src.universal or null;
-      # "type" was introduced with git support; older lockfiles omit it (implying "url")
-      universalType = universalSrc.type or "url";
+      universal = dep.src.universal or null;
       src =
-        if universalType == "git" then
-          fetchgit {
-            inherit (universalSrc) url rev hash;
-            fetchSubmodules = true;
-          }
-        else if universalSrc != null then
-          fetchurl universalSrc
+        if universal != null then
+          fetchers.${universal.type or "url"} (removeAttrs universal [ "type" ])
         else
           fetchurl (dep.src.systems.${stdenv.system} or throwSystem);
     in
@@ -51,7 +50,7 @@ let
       passthru = {
         inherit (dep) manifest;
         inherit installPath;
-        mutableInstall = universalType == "git";
+        mutableInstall = src.universal.git or null == "git";
       };
     }
   ) dependencies;
