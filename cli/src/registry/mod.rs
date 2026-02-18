@@ -1,9 +1,7 @@
 use std::process::Output;
 
 use color_eyre::eyre::{self, Context};
-use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
 use reqwest::{Client, Url};
-use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use serde::{
     de::{DeserializeOwned, Visitor},
     Deserialize,
@@ -17,25 +15,14 @@ use crate::{
 };
 
 pub struct RegistryClient {
-    client: ClientWithMiddleware,
+    client: Client,
     registry_url: Url,
 }
 
 impl Default for RegistryClient {
     fn default() -> Self {
-        let cache_path = xdg::BaseDirectories::with_prefix("platformio2nix")
-            .expect("valid base directories")
-            .create_cache_directory("registry")
-            .expect("valid cache directory");
-        let client = ClientBuilder::new(Client::new())
-            .with(Cache(HttpCache {
-                mode: CacheMode::ForceCache,
-                manager: CACacheManager { path: cache_path },
-                options: HttpCacheOptions::default(),
-            }))
-            .build();
         Self {
-            client,
+            client: Client::new(),
             registry_url: Url::parse("https://api.registry.platformio.org")
                 .expect("valid default registry"),
         }
