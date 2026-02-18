@@ -5,8 +5,8 @@ use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheO
 use reqwest::{Client, Url};
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use serde::{
-    Deserialize,
     de::{DeserializeOwned, Visitor},
+    Deserialize,
 };
 use sha2::{Digest, Sha256};
 use tokio::process::Command;
@@ -82,13 +82,9 @@ impl RegistryClient {
         };
 
         let remote = Command::new("git")
-            .args([
-                "-C",
-                &repo_path.to_string_lossy(),
-                "remote",
-                "get-url",
-                "origin",
-            ])
+            .arg("-C")
+            .arg(repo_path)
+            .args(["remote", "get-url", "origin"])
             .output_success()
             .await
             .context("running git remote get-url")?;
@@ -96,7 +92,9 @@ impl RegistryClient {
         let base_url = Url::parse(String::from_utf8(remote.stdout)?.trim())?;
 
         let output = Command::new("git")
-            .args(["-C", &repo_path.to_string_lossy(), "rev-parse", "HEAD"])
+            .arg("-C")
+            .arg(repo_path)
+            .args(["rev-parse", "HEAD"])
             .output_success()
             .await
             .context("running git rev-parse")?;
