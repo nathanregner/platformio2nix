@@ -24,14 +24,14 @@ let
   initialDeps = builtins.mapAttrs (
     installPath: dep:
     let
-      throwSystem = throw "${dep.name} unsupported system: ${stdenv.system}: ${builtins.attrNames dep.src}";
+      throwSystem = throw "${dep.name} unsupported system: ${stdenv.hostPlatform.system}: ${builtins.attrNames dep.src}";
       universal = dep.src.universal or null;
       fetcher = fetchers.${universal.type or "url"};
       src = fetcher (
         if universal != null then
           removeAttrs universal [ "type" ]
         else
-          dep.src.systems.${stdenv.system} or throwSystem
+          dep.src.systems.${stdenv.hostPlatform.system} or throwSystem
       );
     in
     stdenv.mkDerivation {

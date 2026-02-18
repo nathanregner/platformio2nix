@@ -66,7 +66,7 @@
 
       flake = {
         overlays.default = final: prev: {
-          inherit (self.legacyPackages.${final.system})
+          inherit (self.legacyPackages.${final.stdenv.hostPlatform.system})
             makePlatformIOSetupHook
             platformio2nix
             ;
