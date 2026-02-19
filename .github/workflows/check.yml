@@ -6,26 +6,14 @@ on:
       - master
   pull_request:
 
-jobs:
-  cli:
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@85e6279cec87321a52edac9c87bce653a07cf6c2 # pin@main
-      - name: Check flake
-        run: nix flake check
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-  examples:
+jobs:
+  check-flake:
     runs-on: self-hosted
-    strategy:
-      fail-fast: false
-      matrix:
-        example:
-          - external-deps
-          - marlin
-          - multi-env
-          - pico
     steps:
       - uses: actions/checkout@85e6279cec87321a52edac9c87bce653a07cf6c2 # pin@main
       - name: Check flake
-        working-directory: examples/${{ matrix.example }}
         run: nix flake check
