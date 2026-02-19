@@ -24,7 +24,7 @@ make ...
 pio run ...
 
 # generate a lockfile
-platformio2nix >platformio2nix.lock
+platformio2nix
 ```
 
 ## 2. Build your project

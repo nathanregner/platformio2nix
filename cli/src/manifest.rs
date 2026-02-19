@@ -1,5 +1,6 @@
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, HashSet},
+    ffi::OsStr,
     fs,
     path::{Path, PathBuf},
 };
@@ -9,14 +10,18 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use url::Url;
 
-#[derive(Serialize, Deserialize, Debug)]
+// TODO: bad name, package?
+#[derive(Hash, Eq, PartialEq, Debug)]
 pub struct Artifact {
     pub manifest: PackageManifest,
+    /// Relative install path
     pub install_path: PathBuf,
+    /// Absolute path where the `.piopm` file was found (required to resolve git hashes)
+    pub full_path: PathBuf,
 }
 
 /// .piopm package manifest file
-#[derive(Serialize, Deserialize, Eq, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, Hash, Eq, PartialEq, Clone, Debug)]
 pub struct PackageManifest {
     #[serde(rename = "type")]
     pub ty: PackageType,
@@ -46,14 +51,23 @@ impl PackageType {
     }
 }
 
-#[derive(Serialize, Deserialize, Eq, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, Hash, Eq, PartialEq, Clone, Debug)]
 #[serde(untagged)]
 pub enum PackageSpec {
-    PlatformIO(PlatformIOSpec),
     External(ExternalSpec),
+    PlatformIO(PlatformIOSpec),
 }
 
-#[derive(Serialize, Deserialize, Eq, PartialEq, Clone, Debug)]
+impl PackageSpec {
+    pub fn name(&self) -> &str {
+        match self {
+            PackageSpec::External(s) => &s.name,
+            PackageSpec::PlatformIO(s) => &s.name,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Hash, Eq, PartialEq, Clone, Debug)]
 pub struct PlatformIOSpec {
     pub owner: String,
     pub name: String,
@@ -61,7 +75,7 @@ pub struct PlatformIOSpec {
     _extra: BTreeMap<String, Value>,
 }
 
-#[derive(Serialize, Deserialize, Eq, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, Hash, Eq, PartialEq, Clone, Debug)]
 pub struct ExternalSpec {
     pub name: String,
     pub uri: Url,
@@ -69,14 +83,14 @@ pub struct ExternalSpec {
     _extra: BTreeMap<String, Value>,
 }
 
-pub fn extract_artifacts(root: &Path) -> eyre::Result<Vec<Artifact>> {
-    let mut artifacts = vec![];
+pub fn extract_artifacts(root: &Path) -> eyre::Result<HashSet<Artifact>> {
+    let mut artifacts = HashSet::default();
     extract_artifacts_rec(&mut artifacts, &PathBuf::default(), root)?;
     Ok(artifacts)
 }
 
 fn extract_artifacts_rec(
-    artifacts: &mut Vec<Artifact>,
+    artifacts: &mut HashSet<Artifact>,
     parent: &Path,
     dir: &Path,
 ) -> eyre::Result<()> {
@@ -102,9 +116,17 @@ fn extract_artifacts_rec(
             serde_path_to_error::deserialize::<_, PackageManifest>(de).wrap_err_with(|| {
                 format!("failed to parse manifest file: {}", piopm.to_string_lossy())
             })?;
-        artifacts.push(Artifact {
+        // For git packages, .piopm lives inside .git/; strip that suffix so the
+        // install path points to the actual working-tree directory.
+        let install_path = if parent.file_name() == Some(OsStr::new(".git")) {
+            parent.parent().unwrap_or(&parent).to_path_buf()
+        } else {
+            parent
+        };
+        artifacts.insert(Artifact {
             manifest,
-            install_path: parent,
+            install_path,
+            full_path: path,
         });
     }
 

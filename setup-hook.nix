@@ -1,5 +1,6 @@
 {
   lib,
+  fetchgit,
   fetchurl,
   makeSetupHook,
   stdenv,
@@ -14,17 +15,37 @@
 
 let
   inherit (builtins.fromJSON (builtins.readFile lockfile)) version dependencies;
+
+  fetchers = {
+    git = fetchgit;
+    url = fetchurl;
+  };
+
   initialDeps = builtins.mapAttrs (
     installPath: dep:
     let
-      throwSystem = throw "${dep.name} unsupported system: ${stdenv.system}: ${builtins.attrNames dep.src}";
-      src = dep.src.universal or dep.src.systems.${stdenv.system} or throwSystem;
+      throwSystem = throw "${dep.name} unsupported system: ${stdenv.hostPlatform.system}: ${builtins.attrNames dep.src}";
+      universal = dep.src.universal or null;
+      fetcher = fetchers.${universal.type or "url"};
+      src = fetcher (
+        if universal != null then
+          removeAttrs universal [ "type" ]
+        else
+          dep.src.systems.${stdenv.hostPlatform.system} or throwSystem
+      );
     in
     stdenv.mkDerivation {
       pname = dep.name;
       inherit (dep.manifest) version;
-      src = fetchurl src;
-      sourceRoot = ".";
+      inherit src;
+
+      # fix "unpacker produced multiple directories" for registry packages
+      # generally this doesn't seem to be required for external packages, but it can be overridden
+      sourceRoot = if dep.manifest.spec.uri == null then "." else null;
+
+      # skip patching toolchain-gccarmnoneeabi, etc
+      # again, if this is wrong, it can be overridden
+      dontFixup = true;
 
       env.MANIFEST = builtins.toJSON dep.manifest;
       buildPhase = ''
@@ -72,7 +93,9 @@ let
                     chmod -R +w "${dest}"
                   ''
                 else
-                  ''ln -s "${drv}" "${dest}"''
+                  ''
+                    ln -s "${drv}" "${dest}"
+                  ''
               }
             ''
           ) finalDeps;

@@ -1,4 +1,7 @@
 {
+  lib,
+  makeWrapper,
+  nix-prefetch-git,
   openssl,
   pkg-config,
   rustPlatform,
@@ -9,6 +12,14 @@ rustPlatform.buildRustPackage {
   src = ./cli;
   cargoLock.lockFile = ./cli/Cargo.lock;
 
-  nativeBuildInputs = [ pkg-config ];
+  nativeBuildInputs = [
+    makeWrapper
+    pkg-config
+  ];
   buildInputs = [ openssl ];
+
+  postInstall = ''
+    wrapProgram $out/bin/platformio2nix \
+      --prefix PATH : ${lib.makeBinPath [ nix-prefetch-git ]}
+  '';
 }

@@ -39,6 +39,7 @@
               external-deps = importExample ./examples/external-deps/flake.nix;
               marlin = importExample ./examples/marlin/flake.nix;
               multi-env = importExample ./examples/multi-env/flake.nix;
+              pico = importExample ./examples/pico/flake.nix;
             };
         };
         module = {
@@ -48,7 +49,7 @@
 
       perSystem =
         { pkgs, ... }:
-        {
+        rec {
           legacyPackages = {
             makePlatformIOSetupHook = pkgs.callPackage ./setup-hook.nix { };
           };
@@ -57,11 +58,15 @@
             platformio2nix = pkgs.callPackage ./package.nix { };
             default = platformio2nix;
           };
+
+          checks = {
+            inherit (packages) platformio2nix;
+          };
         };
 
       flake = {
         overlays.default = final: prev: {
-          inherit (self.legacyPackages.${final.system})
+          inherit (self.legacyPackages.${final.stdenv.hostPlatform.system})
             makePlatformIOSetupHook
             platformio2nix
             ;
